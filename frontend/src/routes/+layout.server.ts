@@ -1,17 +1,19 @@
-import { accessIsValid, refreshAccess } from '$lib/auth.js'
+import { tokenIsValid, refreshAccess, clearAuthCookies } from '$lib/auth.js'
 
 
 
-export async function load({cookies}) {
+export async function load({cookies}) { //subject to change
     const accessToken = cookies.get('access')
-    if (accessToken) {
-        const accessValidity = accessIsValid(accessToken) 
-        if (accessValidity) {
-            return
-        }
-        else {
-            const refreshToken = cookies.get('refresh')
-            if (refreshToken) await refreshAccess(cookies, refreshToken) //await to set cookies before response is generated
-        }
+    const refreshToken = cookies.get('refresh')
+    let accessIsValid, refreshIsValid
+
+    if (accessToken) accessIsValid = tokenIsValid(accessToken)
+    if (accessIsValid) return
+
+    if (refreshToken) refreshIsValid = tokenIsValid(refreshToken)
+    if (refreshIsValid) await refreshAccess(cookies, refreshToken!)
+
+    if (!(accessIsValid && refreshIsValid)) {
+        clearAuthCookies(cookies)
     }
 }

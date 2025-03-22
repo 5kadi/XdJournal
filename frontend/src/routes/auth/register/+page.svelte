@@ -6,7 +6,7 @@
 </script>
 
 <main class="flex flex-col items-center">
-    <AuthMenu btnText={'Log in'}/>
+    <AuthMenu btnText={'Register'}/>
    
     {#if form}
         {#if form.success}

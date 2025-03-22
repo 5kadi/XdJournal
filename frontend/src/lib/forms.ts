@@ -1,5 +1,4 @@
 
-
 export class FormResponse {
     success: boolean 
     data!: object

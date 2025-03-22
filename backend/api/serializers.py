@@ -37,10 +37,11 @@ class UserSerializer(ModelSerializer):
                 'write_only': True
             }
         }
-
+        
+    #password somehow won't be cached without this function
     def create(self, validated_data):
         password = validated_data.pop('password')
         user = super().create(validated_data)
         user.set_password(password)
         user.save()
-        return user
+        return user 

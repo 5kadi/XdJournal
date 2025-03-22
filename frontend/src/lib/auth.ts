@@ -9,9 +9,14 @@ export function setAuthHeaders(cookies: Cookies, accessToken: string) {
     api.defaults.headers.common.Authorization = `Bearer ${accessToken}`
 }
 
-export function accessIsValid(accessToken: string) {
-    const accessDecoded = jwtDecode(accessToken)
-    const tokenExpiration = accessDecoded.exp!
+export function clearAuthCookies(cookies: Cookies) {
+    cookies.delete('access', {path: '/'})
+    cookies.delete('refresh', {path: '/'})
+}
+
+export function tokenIsValid(token: string) {
+    const tokenDecoded = jwtDecode(token)
+    const tokenExpiration = tokenDecoded.exp!
     const currentTime = Date.now() / 1000 // 1000 because token.exp is in seconds
     if (tokenExpiration < currentTime) {
         return false
