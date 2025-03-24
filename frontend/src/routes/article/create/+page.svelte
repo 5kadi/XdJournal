@@ -16,6 +16,5 @@
 
 
 <ArticleField bind:articleContent={articleContent}/>
-{@html articleContent}
 
 
