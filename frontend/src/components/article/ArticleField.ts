@@ -71,7 +71,7 @@ export function normalizeContent(selection: Selection) { //doesn't work anyways 
 
 export async function caretSpanEscape(selection: Selection, parentDiv: HTMLDivElement) {
     parentDiv.innerHTML += '&nbsp;' //цыганские фокусы
-    await tick()
+    await tick() //make sure that DOM changes are applied
 
     const {lastChild} = parentDiv
 

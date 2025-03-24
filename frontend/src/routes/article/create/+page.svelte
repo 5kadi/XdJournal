@@ -1,11 +1,21 @@
 <script lang="ts">
     import ArticleField from "../../../components/article/ArticleField.svelte";
     let articleContent = $state("")
+
+
+    function handleSave() {
+        console.log(articleContent)
+    }
+
 </script>
 
-<button>SAVE</button>
-<button>PUBLISH</button>
+<div class="select-none">
+   <button onclick={handleSave}>SAVE</button>
+    <button>PUBLISH</button> 
+</div>
 
-<ArticleField/>
+
+<ArticleField bind:articleContent={articleContent}/>
+{@html articleContent}
 
 
