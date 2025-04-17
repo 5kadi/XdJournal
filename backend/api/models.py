@@ -8,7 +8,8 @@ class Article(models.Model):
     author = models.ForeignKey(to=get_user_model(), on_delete=models.CASCADE, related_name='articles') #creator (User)
     create_date = models.DateTimeField(db_index=True, default=timezone.now) #creation date
     update_date = models.DateTimeField(auto_now=True) #last update date
-    text = models.TextField() #article text (XdMD)
+    text_content = models.TextField() #article text (XdMD)
+    is_published = models.BooleanField(default=False)
 
     @property
     def related_media(self):

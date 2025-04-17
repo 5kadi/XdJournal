@@ -1,5 +1,5 @@
 
-
+/*
 const TEMPLATES: [RegExp, string][] = [
     [/[*]{2}(.*?)[*]{2}/gm, '<b>$1</b>'], //bold
     [/[~]{2}(.*?)[~]{2}/gm, '<i>$1</i>'], //cursive
@@ -15,7 +15,7 @@ export function replaceMarkdown(text: string) {
         replacedText = replacedText.replace(T[0], T[1])
     }
     return replacedText
-}
+} */
 
 
 

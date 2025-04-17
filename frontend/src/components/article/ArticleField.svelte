@@ -6,7 +6,7 @@
 	//interactivity
 	// svelte-ignore non_reactive_update
 		let pos = {x: 0, y: 0} //DOM updates after this value changes, so state is not needed
-	let currentSelection: Selection = $state()! //it will trigger error during the first handleFocus, but who tf cares Xd
+		let currentSelection: Selection; //it will trigger error during the first handleFocus, but who tf cares Xd
 	let showEditMenu = $state(false)
 	//refs
 	let editableDivRef: HTMLDivElement;
@@ -44,12 +44,12 @@
 			} //updates first
 		}
 
+		//selection is always isCollapsed on the first mouse-up (focus), so EditMenu won't be shown
 		if (
-			currentSelection &&
 			!currentSelection.isCollapsed &&
-			!(currentSelection.anchorOffset === currentSelection.focusOffset)
+			!(currentSelection.anchorOffset === currentSelection.focusOffset) //can remove i think
 		) {	
-			showEditMenu = true //mounts second
+			showEditMenu = true //renders second
 		}
 		else {
 			showEditMenu = false

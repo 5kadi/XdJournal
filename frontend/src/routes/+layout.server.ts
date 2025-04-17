@@ -1,19 +1,32 @@
-import { tokenIsValid, refreshAccess, clearAuthCookies } from '$lib/auth.js'
+import { tokenIsValid, clearAuthCookies } from '$lib/auth.js'
+import { apiFetch } from '$lib/api.js'
 
-
-
-export async function load({cookies}) { //subject to change
-    const accessToken = cookies.get('access')
-    const refreshToken = cookies.get('refresh')
+export async function load({cookies}) {
+    let accessToken = cookies.get('access')
+    let refreshToken = cookies.get('refresh')
     let accessIsValid, refreshIsValid
 
     if (accessToken) accessIsValid = tokenIsValid(accessToken)
     if (accessIsValid) return
 
     if (refreshToken) refreshIsValid = tokenIsValid(refreshToken)
-    if (refreshIsValid) await refreshAccess(cookies, refreshToken!)
+    if (refreshIsValid) {
+        const requestBody = JSON.stringify({refresh: refreshToken})
+        const res = await apiFetch(
+            '/user/token/refresh',
+            {
+                method: "POST",
+                body: requestBody
+            }
+        )
+        
+        if (res.ok) {
+            const { access } = await res.json()
+            cookies.set('access', access, {path: '/'})
+            return
+        }
 
-    if (!(accessIsValid && refreshIsValid)) {
-        clearAuthCookies(cookies)
     }
+
+    clearAuthCookies(cookies)
 }

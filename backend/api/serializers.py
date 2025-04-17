@@ -38,7 +38,7 @@ class UserSerializer(ModelSerializer):
             }
         }
         
-    #password somehow won't be cached without this function
+    #password somehow won't be hashed without this function
     def create(self, validated_data):
         password = validated_data.pop('password')
         user = super().create(validated_data)
