@@ -25,7 +25,6 @@ export const actions: Actions = {
 export async function load({ params, cookies, parent }) {
     const accessToken = cookies.get('access')
     let res = await parent()
-    console.log(res)
 
     if (!accessToken) {
         redirect(302, '/auth/login') //TODO: create a popup
