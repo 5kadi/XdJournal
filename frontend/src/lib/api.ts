@@ -1,6 +1,4 @@
 import { PUBLIC_API_URL } from "$env/static/public"
-import type { Cookies } from "@sveltejs/kit"
-import { jwtDecode } from "jwt-decode"
 
 
 export async function apiFetch(url: string, options: RequestInit, accessToken?: string){
@@ -12,7 +10,6 @@ export async function apiFetch(url: string, options: RequestInit, accessToken?: 
     options.headers = {
         ...requestHeaders,
         ...options.headers,
-
     }
 
     return fetch(apiUrl, options)
@@ -20,22 +17,22 @@ export async function apiFetch(url: string, options: RequestInit, accessToken?: 
 
 export class Response {
     success: boolean 
-    data!: object | any
+    value!: object | any
     
-    constructor(success?: boolean, data?: object) {
+    constructor(success?: boolean, value?: object) {
         this.success = success || false
-        this.data = data || {}
+        this.value = value || {}
     }
 
-    setResponse(success: boolean, data: object) {
+    setResponse(success: boolean, value: object) {
         this.success = success
-        this.data = data
+        this.value = value
     }
 
     getResponse() {
         return {
             success: this.success,
-            data: this.data
+            value: this.value
         }
     }
 

@@ -11,9 +11,9 @@ class Article(models.Model):
     text_content = models.TextField() #article text (XdMD)
     is_published = models.BooleanField(default=False)
 
-    @property
-    def related_media(self):
-        return self.media.all()
+    #@property
+    #def related_media(self):
+        #return self.media.all()
 
 class Media(models.Model):
     author = models.ForeignKey(to=get_user_model(), on_delete=models.CASCADE, related_name='media') #creator (User)

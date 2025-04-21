@@ -1,6 +1,7 @@
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 from django.contrib.auth import get_user_model
-from rest_framework_simplejwt.tokens import AccessToken
+from rest_framework_simplejwt.tokens import AccessToken, Token
+from rest_framework_simplejwt.exceptions import TokenError
 from api.serializers import UserSerializer
 
 
@@ -9,7 +10,7 @@ def obtain_pair(user_data):
     return token_pair
 
 
-def decode_access(access_token):
+def decode_access(access_token: Token):
     access_token_d = AccessToken(access_token)
     access_token_d.verify()
 

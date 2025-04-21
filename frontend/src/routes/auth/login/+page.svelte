@@ -10,9 +10,9 @@
 
     {#if form}
         {#if form.success}
-            <h2>{(form.data as any).message}</h2>
+            <h2>{(form.value as any).message}</h2>
         {:else}
-            <h2>{JSON.stringify(form.data)}</h2>        
+            <h2>{JSON.stringify(form.value)}</h2>        
         {/if}
     {/if} 
 </main>
