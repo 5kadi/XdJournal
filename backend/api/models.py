@@ -8,6 +8,7 @@ class Article(models.Model):
     author = models.ForeignKey(to=get_user_model(), on_delete=models.CASCADE, related_name='articles') #creator (User)
     create_date = models.DateTimeField(db_index=True, default=timezone.now) #creation date
     update_date = models.DateTimeField(auto_now=True) #last update date
+    header = models.CharField(max_length=100, default="Unnamed article")
     text_content = models.TextField() #article text (XdMD)
     is_published = models.BooleanField(default=False)
 

@@ -1,5 +1,3 @@
-import { apiFetch } from '$lib/api.js';
-import { Response } from '$lib/api.js';
 import { formActionsFetch } from '$lib/forms.js';
 import { redirect, type Actions } from '@sveltejs/kit';
 
@@ -10,7 +8,7 @@ export const actions: Actions = {
         request,
         {
             accessToken: cookies.get('access')
-        }
+        },
     ),
     publish: async ({cookies, request}) => formActionsFetch(
         '/article/publish',
@@ -22,7 +20,7 @@ export const actions: Actions = {
     )
 }
 
-export async function load({ params, cookies, parent }) {
+export async function load({ cookies, parent }) {
     const accessToken = cookies.get('access')
     let res = await parent()
 

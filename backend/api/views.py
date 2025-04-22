@@ -57,13 +57,15 @@ class ArticleView(ModelViewSet):
     def save(self, request: Request): 
         id = request.data.get('id') #PATCH request, so no need to pass id as argument
         new_text_content = request.data.get('text_content')
+        header = request.data.get('header')
 
         article_obj = self.queryset.get(pk=id) #its ensured that such object already exists
         
         serializer = self.serializer_class(
             article_obj,
             data={
-                'text_content': new_text_content
+                'text_content': new_text_content,
+                'header': header
             },
             partial=True
         ) 
@@ -71,12 +73,13 @@ class ArticleView(ModelViewSet):
             serializer.save()
             return Response({'message': 'Saved successfully!'}, status=200)
         else:
-            return Response({"message": serializer.errors}) #TODO: errors handling
+            return Response({"message": serializer.errors}, status=400) #TODO: errors handling
         
     #save & set is_published = True
     def publish(self, request: Request):
         id = request.data.get('id') #PATCH request, so no need to pass id as argument
         new_text_content = request.data.get('text_content')
+        header = request.data.get('header')
         #PUBLISH status??? Subject to change
 
         article_obj = self.queryset.get(pk=id)
@@ -85,6 +88,7 @@ class ArticleView(ModelViewSet):
             article_obj,
             data={
                 'text_content': new_text_content,
+                'header': header,
                 'is_published': True,
             },
             partial=True
@@ -93,7 +97,7 @@ class ArticleView(ModelViewSet):
             serializer.save()
             return Response({'message': 'Published successfully!'}, status=200)
         else:
-            return Response({"message": serializer.errors}) #TODO: errors handling
+            return Response({"message": serializer.errors}, status=400) #idk what code to choose lmao, TODO: errors handling
 
 class UserView(ModelViewSet):
     queryset = get_user_model().objects.all()
