@@ -1,5 +1,5 @@
 import { formActionsFetch } from '$lib/forms.js';
-import { redirect, type Actions } from '@sveltejs/kit';
+import { type Actions } from '@sveltejs/kit';
 
 export const actions: Actions = {
     save: async ({cookies, request}) => formActionsFetch(
@@ -20,13 +20,8 @@ export const actions: Actions = {
     )
 }
 
-export async function load({ cookies, parent }) {
-    const accessToken = cookies.get('access')
+export async function load({ parent }) {
     let res = await parent()
-
-    if (!accessToken) {
-        redirect(302, '/auth/login') //TODO: create a popup
-    }
 
     if (!res.value.is_owner) {
         res = {

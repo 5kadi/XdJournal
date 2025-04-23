@@ -41,6 +41,17 @@ class ArticleView(ModelViewSet):
     serializer_class = ArticleSerializer
     permission_classes = [IsAuthenticatedOrReadOnly]
 
+    def create(self, request: Request):
+        article_data = request.data
+        article_data['author'] = request.user.id
+
+        serializer = self.serializer_class(data=article_data)
+        if serializer.is_valid():
+            self.perform_create(serializer)
+            return Response(serializer.data, status=200)
+        else:
+            return Response({'message': serializer.errors}, status=400)
+
     #call it before accessing edit menu of an article
     def get(self, request: Request, id: int): 
         user = request.user

@@ -1,12 +1,12 @@
 <script lang="ts">
-    import AuthMenu from "../../../components/auth/AuthMenu.svelte";
+	import AuthForm from "../../../components/forms/AuthForm.svelte";
     import type { PageProps } from "./$types";
 
     let { form }: PageProps = $props()
 </script>
 
 <main class="flex flex-col items-center">
-    <AuthMenu btnText={'Register'}/>
+    <AuthForm btnText={'Register'}/>
    
     {#if form}
         {#if form.success}

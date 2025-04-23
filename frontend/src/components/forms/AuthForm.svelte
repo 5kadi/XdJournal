@@ -1,5 +1,6 @@
 
 <script lang="ts">
+    //NOTE: this component will have some functionality that's different from GenericForm
 	import { enhance } from "$app/forms";
 
     let { btnText } : { btnText: string } = $props()

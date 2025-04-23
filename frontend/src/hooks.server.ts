@@ -1,6 +1,25 @@
-import { PUBLIC_API_URL } from '$env/static/public'
+import { PROTECTED_ROUTES } from './constants'
+import { redirect, type Handle } from '@sveltejs/kit'
 //stuff that should be with each request here!
 //e.g. no refresh check
+
+export const handle: Handle = async ({event, resolve}) => {
+
+	const matchedPath = PROTECTED_ROUTES.some(
+		(pattern) => pattern.test(event.url.pathname)
+	)
+	const accessToken = event.cookies.get('access')
+	
+	if (matchedPath && !accessToken) {
+		redirect(302, '/auth/login') //TODO: create a popup
+	}
+
+	const res = await resolve(event)
+	return res
+}
+
+
+
 
 //SPENT 4 FUCKING HOURS TRYING TO INTERCEPT FETCH REQUEST
 //NEVER TOUCH THIS GARBAGE AGAIN
