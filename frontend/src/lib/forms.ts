@@ -16,8 +16,8 @@ export async function formActionsFetch(
         onerror?: (errJson: any) => void
     }
 ) {
-    const userData = await request.formData()
-    const requestBody = JSON.stringify(Object.fromEntries(userData))
+    const formData = await request.formData()
+    const requestBody = JSON.stringify(Object.fromEntries(formData))
     let formResponse = new Response()
     
     const res = await apiFetch(

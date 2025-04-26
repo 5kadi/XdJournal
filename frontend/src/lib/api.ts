@@ -1,12 +1,12 @@
 import { PUBLIC_API_URL } from "$env/static/public"
 
 
-export async function apiFetch(url: string, options: RequestInit, accessToken?: string){
+export async function apiFetch(url: string, options: RequestInit, accessToken?: string, defaultContentType = true){
     let apiUrl = PUBLIC_API_URL + url
-    const requestHeaders = {
-        'Content-Type': 'application/json; charset=UTF-8',
-        'Authorization': accessToken ? 'Bearer ' + accessToken : ""
-    }
+    let requestHeaders = {'Authorization': accessToken ? 'Bearer ' + accessToken : ""}
+    // @ts-ignore
+    if (defaultContentType) requestHeaders['Content-Type'] = 'application/json; charset=UTF-8'
+    
     options.headers = {
         ...requestHeaders,
         ...options.headers,

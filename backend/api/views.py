@@ -1,5 +1,5 @@
 import json
-from django.shortcuts import render
+from django.shortcuts import render, get_object_or_404
 from django.contrib.auth import get_user_model
 from rest_framework import status
 from rest_framework.permissions import IsAuthenticated, AllowAny, IsAdminUser, IsAuthenticatedOrReadOnly
@@ -15,6 +15,7 @@ from rest_framework_simplejwt.exceptions import TokenError, InvalidToken
 from .services.article import *
 from .services.author import *
 from .services.auth import *
+from .utils.model_utils import *
 from .serializers import *
 from .models import *
 
@@ -55,7 +56,7 @@ class ArticleView(ModelViewSet):
     #call it before accessing edit menu of an article
     def get(self, request: Request, id: int): 
         user = request.user
-        article_obj = self.queryset.get(pk=id)
+        article_obj = get_object_or_404(self.queryset, pk=id)
         serializer = self.serializer_class(article_obj)
 
         is_owner = article_obj.author == user
@@ -67,7 +68,7 @@ class ArticleView(ModelViewSet):
     #object already exists (can't access /article/edit if it doesn't), so no need tto do checks
     def save(self, request: Request): 
         id = request.data.get('id') #PATCH request, so no need to pass id as argument
-        new_text_content = request.data.get('text_content')
+        new_content = request.data.get('content')
         header = request.data.get('header')
 
         article_obj = self.queryset.get(pk=id) #its ensured that such object already exists
@@ -75,7 +76,7 @@ class ArticleView(ModelViewSet):
         serializer = self.serializer_class(
             article_obj,
             data={
-                'text_content': new_text_content,
+                'content': new_content,
                 'header': header
             },
             partial=True
@@ -89,16 +90,16 @@ class ArticleView(ModelViewSet):
     #save & set is_published = True
     def publish(self, request: Request):
         id = request.data.get('id') #PATCH request, so no need to pass id as argument
-        new_text_content = request.data.get('text_content')
+        new_content = request.data.get('content')
         header = request.data.get('header')
         #PUBLISH status??? Subject to change
 
-        article_obj = self.queryset.get(pk=id)
+        article_obj = self.queryset.get(pk=id) #it's already ensured that object exists
 
         serializer = self.serializer_class(
             article_obj,
             data={
-                'text_content': new_text_content,
+                'content': new_content,
                 'header': header,
                 'is_published': True,
             },
@@ -109,6 +110,26 @@ class ArticleView(ModelViewSet):
             return Response({'message': 'Published successfully!'}, status=200)
         else:
             return Response({"message": serializer.errors}, status=400) #idk what code to choose lmao, TODO: errors handling
+
+class MediaView(ModelViewSet):
+    queryset = Media.objects.all()
+    serializer_class = MediaSerializer
+    permission_classes = [IsAuthenticated]
+
+    def create(self, request: Request, *args, **kwargs):
+        media_data = request.data
+        media_data['author'] = request.user.id
+
+        serializer = self.serializer_class(data=media_data)
+        if serializer.is_valid():
+            self.perform_create(serializer)
+            push_content(media_data["article"], serializer.data["content"])
+            res_data = dict(serializer.data)
+            res_data["message"] = "Uploaded successfully. Don't forget to save changes before refreshing the page!"
+            return Response(res_data, status=200)
+        else:
+            return Response({'message': serializer.errors}, status=400)
+
 
 class UserView(ModelViewSet):
     queryset = get_user_model().objects.all()

@@ -9,7 +9,7 @@ class Article(models.Model):
     create_date = models.DateTimeField(db_index=True, default=timezone.now) #creation date
     update_date = models.DateTimeField(auto_now=True) #last update date
     header = models.CharField(max_length=100, default="Unnamed article")
-    text_content = models.TextField(default="Express yourself here!") #article text (XdMD)
+    content = models.TextField(default=r'[{"type":"text", "content":"Express yourself here!"}]') #article text (XdMD)
     is_published = models.BooleanField(default=False)
 
     #@property
@@ -19,7 +19,6 @@ class Article(models.Model):
 class Media(models.Model):
     author = models.ForeignKey(to=get_user_model(), on_delete=models.CASCADE, related_name='media') #creator (User)
     article = models.ForeignKey(to=Article, on_delete=models.CASCADE, related_name='media') #parent article
-    token = models.CharField(max_length=10) #position of image in an article
     content = models.FileField(upload_to=get_filepath) #media itself
 
 

@@ -1,5 +1,5 @@
 import { apiFetch } from '$lib/api.js'
-import { redirect } from '@sveltejs/kit'
+import { error, redirect } from '@sveltejs/kit'
 import { Response } from '$lib/api.js'
 
 export async function load({ params, cookies }) {
@@ -16,10 +16,15 @@ export async function load({ params, cookies }) {
         accessToken
     )
     if (res.ok) {
-        const articleData = await res.json()
+        let articleData = await res.json()
+        articleData.content = JSON.parse(articleData.content)
         articleResponse.setResponse(true, articleData)
     } else {
         const errData = await res.json()
+        if (res.status === 404) {
+            //console.log(errData)
+            throw error(404, errData.message)
+        }
         articleResponse.setResponse(false, errData)
     }
     
