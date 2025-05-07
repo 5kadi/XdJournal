@@ -1,4 +1,6 @@
 <script lang="ts">
+	//NOTE: THIS COMPONENT IS PROBABLY GOING TO GET DELETED
+	//TRUE FUNCTIONALITY IN routes\article\[articleId]\edit\+page.svelte
 	import MediaBlock from "./MediaBlock.svelte";
 	import TextBlock from "./TextBlock.svelte";
 	import EditPopup from "./EditPopup.svelte";
