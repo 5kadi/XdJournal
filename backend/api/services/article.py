@@ -1,5 +1,6 @@
 from api.models import Article
 import json
+import jsonschema
 from rest_framework.response import Response
 from django.contrib.auth.models import User
 
@@ -9,10 +10,18 @@ def article_list(*args, **kwargs):
     return data
 
 
-def push_content(id: int, content: str):
-    article_obj = Article.objects.get(pk=id)
-    article_content_D: list = json.loads(article_obj.content)
-    article_content_D.append({"type": "media", "content": content})
-    print(article_content_D)
-    article_obj.content = json.dumps(article_content_D)
+def push_content(article_id: int, frag_id: str, frag_content: dict):
+    article_obj = Article.objects.get(pk=article_id) #its ensured that object exists
+    article_obj.content[frag_id] = frag_content
     article_obj.save()
+
+def content_frag_is_valid(content_frag):
+    schema = Article.CONTENT_SCHEMA
+    try:
+        jsonschema.validate(content_frag, schema)
+    except jsonschema.ValidationError as e:
+        print(e)
+        return False
+    else:
+        return True
+    

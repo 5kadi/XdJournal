@@ -1,4 +1,5 @@
 import json
+import copy
 from django.shortcuts import render, get_object_or_404
 from django.contrib.auth import get_user_model
 from rest_framework import status
@@ -8,6 +9,7 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework.viewsets import ViewSet, ModelViewSet
 from rest_framework.exceptions import ValidationError
+from rest_framework.parsers import MultiPartParser
 #from rest_framework_simplejwt.tokens import AccessToken, RefreshToken
 from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
@@ -32,10 +34,6 @@ class TestAPIView(APIView):
         print(request.data)
         from random import randint
         return Response({"response": randint(1, 10)})
-
-class MediaView(ModelViewSet):
-    queryset = Media.objects.all()
-    serializer_class = MediaSerializer
 
 class ArticleView(ModelViewSet):
     queryset = Article.objects.all()
@@ -66,26 +64,22 @@ class ArticleView(ModelViewSet):
         return Response(res_data, status=200)
             
     #object already exists (can't access /article/edit if it doesn't), so no need tto do checks
-    def save(self, request: Request): 
-        id = request.data.get('id') #PATCH request, so no need to pass id as argument
-        new_content = request.data.get('content')
-        header = request.data.get('header')
+    def save_block(self, request: Request): 
+        article_id = request.data.get('article_id') #PATCH request, so no need to pass id as argument
+        content_frag = request.data.get('content_frag')
 
-        article_obj = self.queryset.get(pk=id) #its ensured that such object already exists
-        
-        serializer = self.serializer_class(
-            article_obj,
-            data={
-                'content': new_content,
-                'header': header
-            },
-            partial=True
-        ) 
-        if serializer.is_valid():
-            serializer.save()
+        if content_frag_is_valid(content_frag):
+            frag_id, frag_content = [*content_frag.items()][0]
+            push_content(article_id, frag_id, frag_content)
             return Response({'message': 'Saved successfully!'}, status=200)
         else:
-            return Response({"message": serializer.errors}, status=400) #TODO: errors handling
+            return Response({"message": "Invalid JSON schema!"}, status=400)
+
+        #if serializer.is_valid():
+            #serializer.save()
+            #return Response({'message': 'Saved successfully!'}, status=200)
+        #else:
+            #return Response({"message": serializer.errors}, status=400) #TODO: errors handling
         
     #save & set is_published = True
     def publish(self, request: Request):
@@ -118,15 +112,19 @@ class MediaView(ModelViewSet):
 
     def create(self, request: Request, *args, **kwargs):
         media_data = request.data
-        media_data['author'] = request.user.id
+        media_data["author"] = request.user.id
 
         serializer = self.serializer_class(data=media_data)
         if serializer.is_valid():
             self.perform_create(serializer)
-            push_content(media_data["article"], serializer.data["content"])
-            res_data = dict(serializer.data)
-            res_data["message"] = "Uploaded successfully. Don't forget to save changes before refreshing the page!"
-            return Response(res_data, status=200)
+            
+            frag_content = {
+                "type": "media",
+                "content": serializer.data["content"]
+            }
+            push_content(serializer.data["article"], serializer.data["frag_id"], frag_content)
+            
+            return Response(serializer.data, status=200)
         else:
             return Response({'message': serializer.errors}, status=400)
 

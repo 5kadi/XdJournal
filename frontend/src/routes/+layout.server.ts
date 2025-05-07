@@ -27,6 +27,6 @@ export async function load({cookies}) {
         }
 
     }
-
-    clearAuthCookies(cookies)
+    if (!refreshIsValid && !accessIsValid) clearAuthCookies(cookies)
+   
 }

@@ -1,4 +1,4 @@
-import { apiFetch, Response } from "./api";
+import { apiFetch, ServerResponse } from "./api";
 
 
 export async function formActionsFetch(
@@ -18,7 +18,7 @@ export async function formActionsFetch(
 ) {
     const formData = await request.formData()
     const requestBody = JSON.stringify(Object.fromEntries(formData))
-    let formResponse = new Response()
+    let formResponse = new ServerResponse()
     
     const res = await apiFetch(
         url,

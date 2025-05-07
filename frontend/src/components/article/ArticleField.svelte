@@ -2,22 +2,31 @@
 	import MediaBlock from "./MediaBlock.svelte";
 	import TextBlock from "./TextBlock.svelte";
 	import EditPopup from "./EditPopup.svelte";
+	import { generateId } from "$lib/article";
 
-	let { articleContent = $bindable() } : {articleContent: {type: string, content: string}[]} = $props()
-	//let blocksLength = $state(articleContent.length)
+	let { resArticleContent } = $props()
+	let articleContent: {[id: string]: {type: string, content: string} } = $state(resArticleContent)
 
 	function addBlock(type: string) {
-		articleContent = [...articleContent, {type: type, content: ""}]
+		const id = generateId()
+		let newBlock = {} as any
+		newBlock[id] = {
+			type: type,
+			content: ""
+		}
+		articleContent = {...articleContent, ...newBlock}
 	}
 	//so, inline-block div somehow inserts <br> instead of <div> on enter
 </script>
 
 <main class="relative">
-	{#each articleContent as contentBlock }
-		{#if contentBlock.type === "text"} 
-			<TextBlock bind:textContent={contentBlock.content}/>
-		{:else if contentBlock.type === "media"}
-			<MediaBlock bind:mediaContent={contentBlock.content}/>
+	{JSON.stringify(resArticleContent)}<br>
+	{JSON.stringify(articleContent)}
+	{#each Object.entries(articleContent) as contentBlock }
+		{#if contentBlock[1].type === "text"} 
+			<TextBlock blockData={contentBlock}/>
+		{:else if contentBlock[1].type === "media"}
+			<MediaBlock blockData={contentBlock}/>
 		{/if}
 	{/each}
 </main>

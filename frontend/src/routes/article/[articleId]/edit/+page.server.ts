@@ -1,28 +1,12 @@
-import { formActionsFetch } from '$lib/forms.js';
+
 import { type Actions } from '@sveltejs/kit';
-import { Response, apiFetch } from '$lib/api.js';
-import { invalidate } from '$app/navigation';
+import { ServerResponse, apiFetch } from '$lib/api.js';
+
 
 export const actions: Actions = {
-    save: async ({cookies, request}) => formActionsFetch(
-        '/article/save',
-        "PATCH",
-        request,
-        {
-            accessToken: cookies.get('access')
-        },
-    ),
-    publish: async ({cookies, request}) => formActionsFetch(
-        '/article/publish',
-        "PATCH",
-        request,
-        {
-            accessToken: cookies.get('access')
-        }
-    ),
     uploadMedia: async ({cookies, request, params}) => {
         const formData = await request.formData()
-        let formResponse = new Response()
+        let formResponse = new ServerResponse()
         const { articleId } = params
 
         //const matches = request.url.match(/\/article\/(?<articleId>\d+)\/edit/)!

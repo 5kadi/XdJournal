@@ -1,12 +1,12 @@
 <script lang="ts">
     import { caretSpanEscape, wrapContent } from "./Utils";
 
-	let { textContent = $bindable() } = $props()
+	let { blockData }: {blockData: [string, {type: string, content: string}]} = $props()
 	let editableDivRef: HTMLDivElement;
 
     //wrapContent inserts html tags into range and doesn't trigger state update, this is why we need this function
 	function updateContent() {
-		textContent = editableDivRef.innerHTML
+		blockData[1].content = editableDivRef.innerHTML
 	}
 	
 	async function handleFocus(e: any) {
@@ -22,6 +22,19 @@
 			updateContent()
 		}
 	}
+
+	async function saveContent() {
+		//console.log('xd', JSON.stringify(blockData))
+		const res = await fetch(
+			'',
+			{
+				method: "PATCH",
+				body: JSON.stringify(Object.fromEntries([blockData])),
+			}
+		)
+		const resData = await res.json()
+		console.log(resData)
+	}
 </script>
 
 
@@ -30,10 +43,12 @@
 	class="h-auto w-full inline-block"  
 	contenteditable="true" 
 	onfocus={handleFocus}
+	onfocusout={saveContent}
     onmouseup={updateContent}
 	bind:this={editableDivRef} 
-	bind:innerHTML={textContent}
+	bind:innerHTML={blockData[1].content}
 >
 </div>
+
 
 

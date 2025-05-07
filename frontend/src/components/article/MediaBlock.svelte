@@ -2,7 +2,7 @@
 	import { enhance } from "$app/forms";
 	import MediaField from "../media/MediaField.svelte";
 
-	let { mediaContent = $bindable() } = $props()
+	let { blockData }: {blockData: [string, {type: string, content: string}]} = $props()
     let formRef: HTMLFormElement, submitRef: HTMLButtonElement;
 
     function autoUpload() {
@@ -13,8 +13,8 @@
 </script>
 
 
-{#if mediaContent}
-    <MediaField mediaUrl={mediaContent}/>
+{#if blockData[1].content}
+    <MediaField mediaUrl={blockData[1].content}/>
 {:else}
     <div class="w-[30%] h-auto">
         <form method="POST" action="?/uploadMedia" bind:this={formRef} enctype="multipart/form-data" use:enhance>
@@ -23,8 +23,12 @@
                 name="content"
                 onchange={autoUpload}
             />
+            <input
+                type="hidden"
+                name="frag_id"
+                value={blockData[0]}
+            />
             <button class="invisible" type="submit" bind:this={submitRef}></button>
         </form>
     </div>
 {/if}
-

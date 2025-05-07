@@ -15,7 +15,7 @@ export async function apiFetch(url: string, options: RequestInit, accessToken?: 
     return fetch(apiUrl, options)
 }
 
-export class Response {
+export class ServerResponse {
     success: boolean 
     value!: object | any
     

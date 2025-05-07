@@ -12,10 +12,7 @@ class MediaSerializer(ModelSerializer):
         extra_kwargs = {
             'author': {
                 'write_only': True
-            },
-            'article': {
-                'write_only': True
-            },
+            }, #No need to get info about an author yet
         }
 
 class ArticleSerializer(ModelSerializer):

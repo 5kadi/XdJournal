@@ -1,43 +1,64 @@
 <script lang="ts">
-	import { enhance } from "$app/forms";
-    import ArticleField from "../../../../components/article/ArticleField.svelte";
+    import TextBlock from "../../../../components/article/TextBlock.svelte";
+    import MediaBlock from "../../../../components/article/MediaBlock.svelte";
+    import EditPopup from "../../../../components/article/EditPopup.svelte";
 	import ErrorPopup from "../../../../components/errors/ErrorPopup.svelte";
+    import { generateId } from "$lib/article";
 
     let { data, form } = $props()
-    let articleContent = $state(data.success ? data.value.content : "")
-    let articleHeader = $state(data.value.header)
+    let addedBlock: [string, {type: string, content: string}] | undefined = $state()
 
+    function addBlock(type: string) {
+        const id = generateId()
+        addedBlock = [
+            id,
+            {
+                type: type,
+                content: ""
+            }
+        ]
+    }
 </script>
 
 {#if form}
     <ErrorPopup parentForm={form}/>
 {/if} 
 
-{#await data}
-    <h1>Loading...</h1>
-{:then res} 
-    {#if res.success}
-        <form method="POST" class="select-none flex flex-row gap-4" use:enhance>
-            <button 
-                formaction="?/save"
-            >
-                SAVE
-            </button>
-            <button
-                formaction="?/publish"
-            >
-                PUBLISH
-            </button>
-            <input type="hidden" name="id" value={res.value.id}/>
-            <input type="hidden" name="header" value={articleHeader}/>
-            <input type="hidden" name="content" value={JSON.stringify(articleContent)}/>
-        </form>
-        <h1 class="font-bold text-2xl" contenteditable="true" bind:innerText={articleHeader}></h1>
-        <ArticleField bind:articleContent={articleContent}/>
-    {:else}
-        <h1>{JSON.stringify(res)}</h1>
+
+<main class="relative">
+    {#await data}
+        <h1>Loading...</h1>
+    {:then res} 
+        {#if res.success}
+            <h1 class="font-bold text-2xl" contenteditable="true" bind:innerText={res.value.header}></h1>
+            {#each Object.entries(res.value.content as {[id: string]: {type: string, content: string}}) as contentBlock (contentBlock[0])}
+                {#if contentBlock[1].type === "text"} 
+                    <TextBlock blockData={contentBlock}/>
+                {:else if contentBlock[1].type === "media"}
+                    <MediaBlock blockData={contentBlock}/>
+                {/if}
+            {/each}
+        {:else}
+            {JSON.stringify(res.value)}
+        {/if}
+    {/await}
+
+    {#if addedBlock}
+        {#if addedBlock[1].type === "text"} 
+            <TextBlock blockData={addedBlock}/>
+        {:else if addedBlock[1].type === "media"}
+            <MediaBlock blockData={addedBlock}/>
+        {/if}
     {/if}
-{/await}
+</main>
+
+<div class="flex flex-row gap-4">
+    <button onclick={() => addBlock('text')}>Text Block +</button>
+    <button onclick={() => addBlock('media')}>Media Block +</button>
+</div>
+
+<EditPopup/>
+
 
 
 
