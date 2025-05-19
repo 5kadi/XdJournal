@@ -2,22 +2,12 @@
 
 <script lang="ts">
 	import GenericForm from "../../../components/forms/GenericForm.svelte";
+	import { upperPopupState } from "../../../shared.svelte";
 
     let {form} = $props()
- 
-</script>
+    upperPopupState.message = form?.message
 
-{#if form}
-    {#await form}
-        <h1>Loading...</h1>
-    {:then res}
-        {#if res.success}
-            <h2>{(res.value as any).message}</h2>
-        {:else}
-            <h2>{JSON.stringify(res.value.message)}</h2>        
-        {/if}
-    {/await}
-{/if}  
+</script>
 
 <GenericForm 
     submitText="Create" 

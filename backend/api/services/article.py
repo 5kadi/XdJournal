@@ -1,4 +1,4 @@
-from api.models import Article
+from api.models import ARTICLE_CONTENT_SCHEMA, Article
 import json
 import jsonschema
 from rest_framework.response import Response
@@ -9,18 +9,23 @@ def article_list(*args, **kwargs):
     data = Article.objects.all()
     return data
 
+def check_ownership(article_obj: Article, user: User):
+    if article_obj.author == user:
+        return True
+    else:
+        return False
 
-def push_content(article_id: int, frag_id: str, frag_content: dict):
-    article_obj = Article.objects.get(pk=article_id) #its ensured that object exists
+
+def push_content(article_obj: Article, frag_id: str, frag_content: dict): #its ensured that object exists
     article_obj.content[frag_id] = frag_content
     article_obj.save()
 
 def content_frag_is_valid(content_frag):
-    schema = Article.CONTENT_SCHEMA
+    schema = ARTICLE_CONTENT_SCHEMA
     try:
         jsonschema.validate(content_frag, schema)
     except jsonschema.ValidationError as e:
-        print(e)
+        #print(e)
         return False
     else:
         return True

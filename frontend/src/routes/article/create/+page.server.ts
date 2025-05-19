@@ -9,7 +9,9 @@ export const actions: Actions = {
         request,
         {
             accessToken: cookies.get('access'),
-            onsuccess: (resJson: any) => redirect(302, `/article/${resJson.id}/edit`)
+            onsuccess: (resJson: any) => {
+                redirect(302, `/article/${resJson.id}/edit`)
+            }
         }
     )
 }

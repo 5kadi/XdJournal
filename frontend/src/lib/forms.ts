@@ -28,16 +28,14 @@ export async function formActionsFetch(
         },
         accessToken && accessToken
     )
+    const resData = await res.json()
+
     if (res.ok) {
-        const resJson = await res.json()
-        onsuccess && onsuccess(resJson)
-        formResponse.setResponse(true, resJson)
+        onsuccess && onsuccess(resData)
     } else {
-        const errJson = await res.json()
-        onerror && onerror(errJson)
-        formResponse.setResponse(false, errJson)
+        onerror && onerror(resData)
     }
 
-    return formResponse.getResponse()
+    return resData
 
 }

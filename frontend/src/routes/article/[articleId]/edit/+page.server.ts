@@ -1,5 +1,5 @@
 
-import { type Actions } from '@sveltejs/kit';
+import { error, type Actions } from '@sveltejs/kit';
 import { ServerResponse, apiFetch } from '$lib/api.js';
 
 
@@ -14,41 +14,23 @@ export const actions: Actions = {
         formData.append('article', articleId!)
 
         const res = await apiFetch(
-            "/media/create",
+            `/article/${articleId}/media/create`,
             {
                 method: "POST",
                 body: formData,
                 //headers: {'Content-Type': 'multipart/form-data;'}
             },
             cookies.get('access'),
-            false
+            false //won't work with standard headers for some reason lmao
         )
-        
-        if (res.ok) {
-            const resJson = await res.json()
-            formResponse.setResponse(true, resJson)
-        } else {
-            const errJson = await res.json()
-            formResponse.setResponse(false, errJson)
-        }
-        
-        return formResponse.getResponse()
+        const resData = await res.json()
+        return resData
     }
 
 }
 
 export async function load({ parent }) {
-    let res = await parent()
-
-    if (!res.value.is_owner) {
-        res = {
-            success: false,
-            value: {
-                message: 'This article is owned by a different author!'
-            }
-        }
-
-    }
-    
+    const res = await parent()
+    if (!res.is_owner) error(401, "You don't own this article!")
     return res
 }

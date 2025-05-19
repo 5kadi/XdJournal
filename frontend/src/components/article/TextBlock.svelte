@@ -24,16 +24,13 @@
 	}
 
 	async function saveContent() {
-		//console.log('xd', JSON.stringify(blockData))
 		const res = await fetch(
 			'',
 			{
 				method: "PATCH",
-				body: JSON.stringify(Object.fromEntries([blockData])),
+				body: JSON.stringify({content_frag: Object.fromEntries([blockData])}),
 			}
 		)
-		const resData = await res.json()
-		console.log(resData)
 	}
 </script>
 

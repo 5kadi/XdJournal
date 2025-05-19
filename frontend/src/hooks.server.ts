@@ -1,5 +1,5 @@
 import { PROTECTED_ROUTES } from './constants'
-import { redirect, type Handle } from '@sveltejs/kit'
+import { redirect, type Handle, type HandleServerError } from '@sveltejs/kit'
 //stuff that should be with each request here!
 //e.g. no refresh check
 
@@ -17,6 +17,15 @@ export const handle: Handle = async ({event, resolve}) => {
 	const res = await resolve(event)
 	return res
 }
+
+/**
+export const handleError: HandleServerError = async ({error, event, status, message}) => {
+	console.log('xd')
+	return {
+		message: "nigga",
+	}
+} 
+*/
 
 
 

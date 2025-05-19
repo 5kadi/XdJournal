@@ -1,5 +1,6 @@
 import type { Actions } from './$types';
 import { formActionsFetch } from '$lib/forms';
+import { upperPopupState } from '../../../shared.svelte';
 
 //NOTE: there is no need for message on successful login or reqister
 export const actions: Actions = {

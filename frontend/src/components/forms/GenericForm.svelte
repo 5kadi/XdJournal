@@ -2,6 +2,7 @@
 <script lang="ts">
 	import { enhance } from "$app/forms";
 	import type { HTMLInputTypeAttribute } from "svelte/elements";
+	import { setPopup } from "./Utils.svelte";
 
     let { 
         fields,
@@ -17,7 +18,7 @@
 
 </script>
 
-<form method="POST" class="flex flex-col items-center" use:enhance>
+<form method="POST" class="flex flex-col items-center" use:enhance={() => setPopup}>
     <h1>{headerText}</h1>
 
     {#each fields as field (field.name)}

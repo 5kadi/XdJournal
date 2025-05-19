@@ -5,9 +5,10 @@ from rest_framework.serializers import ModelSerializer, CharField
 from .models import *
 
 
-class MediaSerializer(ModelSerializer):
+
+class ArticleMediaSerializer(ModelSerializer):
     class Meta:
-        model = Media
+        model = ArticleMedia
         fields = '__all__'
         extra_kwargs = {
             'author': {
@@ -16,10 +17,11 @@ class MediaSerializer(ModelSerializer):
         }
 
 class ArticleSerializer(ModelSerializer):
-    related_media = MediaSerializer(required=False, many=True)
+    related_media = ArticleMediaSerializer(required=False, many=True)
     class Meta:
         model = Article
         fields = '__all__'
+
 
 class UserSerializer(ModelSerializer):
     class Meta:

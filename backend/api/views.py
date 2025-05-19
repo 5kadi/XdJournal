@@ -47,7 +47,9 @@ class ArticleView(ModelViewSet):
         serializer = self.serializer_class(data=article_data)
         if serializer.is_valid():
             self.perform_create(serializer)
-            return Response(serializer.data, status=200)
+            #data instead of validated_data, because validated_data returns user as an object
+            #Also no need for message field lmao
+            return Response({'message': 'Created an article successfully!', **serializer.data}, status=201)
         else:
             return Response({'message': serializer.errors}, status=400)
 
@@ -58,44 +60,36 @@ class ArticleView(ModelViewSet):
         serializer = self.serializer_class(article_obj)
 
         is_owner = article_obj.author == user
-        res_data = dict(serializer.data)
-        res_data['is_owner'] = is_owner
 
-        return Response(res_data, status=200)
+        return Response({"is_owner": is_owner, **serializer.data}, status=200)
             
     #object already exists (can't access /article/edit if it doesn't), so no need tto do checks
-    def save_block(self, request: Request): 
-        article_id = request.data.get('article_id') #PATCH request, so no need to pass id as argument
+    def save_block(self, request: Request, id: int): 
         content_frag = request.data.get('content_frag')
+        article_obj = self.queryset.get(pk=id)
+
+        if not check_ownership(article_obj, request.user):
+            return Response({"message": "You don't own this article!"}, status=401)
 
         if content_frag_is_valid(content_frag):
             frag_id, frag_content = [*content_frag.items()][0]
-            push_content(article_id, frag_id, frag_content)
+            push_content(article_obj, frag_id, frag_content)
             return Response({'message': 'Saved successfully!'}, status=200)
         else:
             return Response({"message": "Invalid JSON schema!"}, status=400)
-
-        #if serializer.is_valid():
-            #serializer.save()
-            #return Response({'message': 'Saved successfully!'}, status=200)
-        #else:
-            #return Response({"message": serializer.errors}, status=400) #TODO: errors handling
         
     #save & set is_published = True
-    def publish(self, request: Request):
-        id = request.data.get('id') #PATCH request, so no need to pass id as argument
-        new_content = request.data.get('content')
-        header = request.data.get('header')
-        #PUBLISH status??? Subject to change
-
+    def publish(self, request: Request, id: int):
+        publish_status: bool = request.data.get('publish_status')
         article_obj = self.queryset.get(pk=id) #it's already ensured that object exists
+
+        if not check_ownership(article_obj, request.user):
+            return Response({"message": "You don't own this article!"}, status=401)
 
         serializer = self.serializer_class(
             article_obj,
             data={
-                'content': new_content,
-                'header': header,
-                'is_published': True,
+                'is_published': publish_status,
             },
             partial=True
         ) 
@@ -105,14 +99,19 @@ class ArticleView(ModelViewSet):
         else:
             return Response({"message": serializer.errors}, status=400) #idk what code to choose lmao, TODO: errors handling
 
-class MediaView(ModelViewSet):
+class ArticleMediaView(ModelViewSet):
     queryset = Media.objects.all()
-    serializer_class = MediaSerializer
+    serializer_class = ArticleMediaSerializer
     permission_classes = [IsAuthenticated]
 
-    def create(self, request: Request, *args, **kwargs):
+    def create(self, request: Request, id: int):
         media_data = request.data
         media_data["author"] = request.user.id
+        media_data["article"] = id
+        article_obj = Article.objects.get(pk=id)
+
+        if not check_ownership(article_obj, request.user):
+            return Response({"message": "You don't own this article!"}, status=401)
 
         serializer = self.serializer_class(data=media_data)
         if serializer.is_valid():
@@ -122,9 +121,9 @@ class MediaView(ModelViewSet):
                 "type": "media",
                 "content": serializer.data["content"]
             }
-            push_content(serializer.data["article"], serializer.data["frag_id"], frag_content)
+            push_content(article_obj, serializer.data["frag_id"], frag_content)
             
-            return Response(serializer.data, status=200)
+            return Response({'message': 'Created an article successfully!', **serializer.data}, status=200)
         else:
             return Response({'message': serializer.errors}, status=400)
 
@@ -144,7 +143,11 @@ class UserView(ModelViewSet):
         headers = self.get_success_headers(serializer.data)
         token_pair = obtain_pair(request.data)
         
-        return Response(token_pair, status=status.HTTP_201_CREATED, headers=headers)
+        return Response(
+            {"message": "Created an account successfully!", **token_pair}, 
+            status=status.HTTP_201_CREATED, 
+            headers=headers
+        )
 
 
     def decode_user_data(self, request: Request):
@@ -156,6 +159,17 @@ class UserView(ModelViewSet):
     
         serializer = self.serializer_class(user)
         return Response(serializer.data)
+
+class CustomTokenObtainPairView(TokenObtainPairView):
+        permission_classes = [AllowAny]
+        
+        def post(self, request: Request, *args, **kwargs) -> Response:
+            serializer = self.get_serializer(data=request.data)
+
+            if serializer.is_valid(raise_exception=True):
+                return Response({"message": "Logged in successfully!", **serializer.validated_data}, status=200)
+            else:
+                return Response({"message": serializer.errors}, status=400)
 
 
 
