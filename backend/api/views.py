@@ -1,5 +1,4 @@
-import json
-import copy
+
 from django.shortcuts import render, get_object_or_404
 from django.contrib.auth import get_user_model
 from rest_framework import status
@@ -20,20 +19,6 @@ from .services.auth import *
 from .utils.model_utils import *
 from .serializers import *
 from .models import *
-
-
-# Create your views here.
-class TestAPIView(APIView):
-    permission_classes = [IsAuthenticated]
-
-    def get(self, request: Request):
-        #print(request.headers.get('Authorization'))
-        return Response({"response": "get"})
-    
-    def post(self, request: Request):
-        print(request.data)
-        from random import randint
-        return Response({"response": randint(1, 10)})
 
 class ArticleView(ModelViewSet):
     queryset = Article.objects.all()
@@ -62,6 +47,10 @@ class ArticleView(ModelViewSet):
         is_owner = article_obj.author == user
 
         return Response({"is_owner": is_owner, **serializer.data}, status=200)
+    
+    def list(self, request: Request):
+        serializer = ArticleListSerializer(self.queryset[:5], many=True) #boilerplate
+        return Response(serializer.data, status=200)
             
     #object already exists (can't access /article/edit if it doesn't), so no need tto do checks
     def save_block(self, request: Request, id: int): 
@@ -149,7 +138,6 @@ class UserView(ModelViewSet):
             headers=headers
         )
 
-
     def decode_user_data(self, request: Request):
         access_token = request.data.get('access')
         try:
@@ -172,6 +160,20 @@ class CustomTokenObtainPairView(TokenObtainPairView):
                 return Response({"message": serializer.errors}, status=400)
 
 
+"""
+# Create your views here.
+class TestAPIView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request: Request):
+        #print(request.headers.get('Authorization'))
+        return Response({"response": "get"})
+    
+    def post(self, request: Request):
+        print(request.data)
+        from random import randint
+        return Response({"response": randint(1, 10)})
+"""
 
 
 """

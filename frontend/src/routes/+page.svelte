@@ -1,2 +1,14 @@
-<h1>Welcome to SvelteKit</h1>
-<p>Visit <a href="https://svelte.dev/docs/kit">svelte.dev/docs/kit</a> to read the documentation</p>
+<script>
+	import ArticleCard from '../components/cards/ArticleCard.svelte';
+
+    let { data } = $props()
+</script>
+
+<section class="grid grid-cols-3 grid-rows-2 gap-4 w-[70vw] h-[75vh]">
+    {#each data.articleDataArr as articleData (articleData.id) }
+        <ArticleCard articleData={articleData}/>
+    {/each}
+</section>
+
+
+

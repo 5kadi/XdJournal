@@ -5,7 +5,7 @@ from rest_framework_simplejwt.exceptions import TokenError
 from api.serializers import UserSerializer
 
 
-def obtain_pair(user_data):
+def obtain_pair(user_data: dict):
     token_pair = TokenObtainPairSerializer().validate(user_data)
     return token_pair
 

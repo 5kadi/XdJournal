@@ -3,7 +3,8 @@
 	import MediaField from "../media/MediaField.svelte";
 
 	let { blockData }: {blockData: [string, {type: string, content: string}]} = $props()
-    let formRef: HTMLFormElement, submitRef: HTMLButtonElement;
+    // svelte-ignore non_reactive_update
+        let formRef: HTMLFormElement, submitRef: HTMLButtonElement;
 
     function autoUpload() {
         formRef.requestSubmit(submitRef)

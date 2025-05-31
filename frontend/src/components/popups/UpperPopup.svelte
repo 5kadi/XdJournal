@@ -1,5 +1,6 @@
 <script lang="ts">
     import { upperPopupState } from "../../shared.svelte";
+    //let { customWrapper }: {customWrapper: any | undefined} = $props()
 </script>
 
 {#if upperPopupState.message}

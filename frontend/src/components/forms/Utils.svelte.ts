@@ -1,13 +1,13 @@
 import { goto } from "$app/navigation";
 import { upperPopupState } from "../../shared.svelte";
 
-export async function setPopup({result, update} : {result: any, update: any}) {
+export async function onAction({result, update} : {result: any, update: any}) {
     switch (result.type) {
         case ('success'): 
             upperPopupState.message = result.data.message
             await update()
             break
-        case ('redirect'):
+        case ('redirect'): //possibly useless line xd
             goto(result.location)
             break
         default:

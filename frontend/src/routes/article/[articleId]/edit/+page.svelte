@@ -1,7 +1,7 @@
 <script lang="ts">
-    import TextBlock from "../../../../components/article/TextBlock.svelte";
-    import MediaBlock from "../../../../components/article/MediaBlock.svelte";
-    import EditPopup from "../../../../components/article/EditPopup.svelte";
+    import TextBlock from "../../../../components/articleEdit/TextBlock.svelte";
+    import MediaBlock from "../../../../components/articleEdit/MediaBlock.svelte";
+    import EditPopup from "../../../../components/articleEdit/EditPopup.svelte";
     import { generateId } from "$lib/article";
 	import { upperPopupState } from "../../../../shared.svelte";
 

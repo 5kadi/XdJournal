@@ -14,7 +14,7 @@ urlpatterns = [
 
 
     path(r"article/get/<int:id>", ArticleView.as_view({'get': 'get'})),
-    #path(r"article/list", ArticleView.as_view({'get': 'list'})),
+    path(r"article/list", ArticleView.as_view({'get': 'list'})),
     path(r"article/create", ArticleView.as_view({'post': 'create'})),
     path(r"article/<int:id>/save_block", ArticleView.as_view({'patch': 'save_block'})),
     path(r"article/<int:id>/publish", ArticleView.as_view({'patch': 'publish'})),

@@ -18,14 +18,15 @@ export const handle: Handle = async ({event, resolve}) => {
 	return res
 }
 
-/**
-export const handleError: HandleServerError = async ({error, event, status, message}) => {
-	console.log('xd')
-	return {
-		message: "nigga",
-	}
-} 
-*/
+
+
+
+
+
+
+
+
+
 
 
 

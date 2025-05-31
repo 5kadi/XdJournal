@@ -36,6 +36,7 @@
 
 
 
+<!-- svelte-ignore a11y_no_static_element_interactions -->
 <div 
 	class="h-auto w-full inline-block"  
 	contenteditable="true" 

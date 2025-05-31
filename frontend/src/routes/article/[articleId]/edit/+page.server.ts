@@ -1,12 +1,11 @@
 
 import { error, type Actions } from '@sveltejs/kit';
-import { ServerResponse, apiFetch } from '$lib/api.js';
+import { apiFetch } from '$lib/api.js';
 
 
 export const actions: Actions = {
     uploadMedia: async ({cookies, request, params}) => {
         const formData = await request.formData()
-        let formResponse = new ServerResponse()
         const { articleId } = params
 
         //const matches = request.url.match(/\/article\/(?<articleId>\d+)\/edit/)!

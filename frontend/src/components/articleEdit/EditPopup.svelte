@@ -6,7 +6,8 @@
     // svelte-ignore non_reactive_update
     let pos = {x: 0, y: 0} //DOM updates after this value changes, so state is not needed
 	let currentSelection: Selection; //it will trigger error during the first handleFocus, but who tf cares Xd
-    let editMenuRef: HTMLDivElement;
+    // svelte-ignore non_reactive_update
+        let editMenuRef: HTMLDivElement;
 
 
     function handleSelectionChange() {
