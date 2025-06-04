@@ -1,66 +1,64 @@
-from django.dispatch import receiver
 from django.utils import timezone
 from django.db import models
-from django.contrib import auth
-from django.contrib.auth.models import AbstractBaseUser
-from .utils import model_utils
+from django.contrib.auth.models import AbstractBaseUser, PermissionsMixin
+from django.contrib.auth.base_user import BaseUserManager
+from .storage import OverwriteStorage
 import os
 
+#this code should be in api/models but it doesn't work there Xd
+
+class CustomUserManager(BaseUserManager):
+
+    use_in_migrations = True
+
+    def create_user(self, email: str, password: str, **extra_fields):
+        if not email:
+            raise ValueError(_("The Email must be set"))
+        email = self.normalize_email(email)
+        user = self.model(email=email, **extra_fields)
+        user.set_password(password)
+        user.save()
+        return user
+        
+    #Won't use superuser option
+    """
+    def create_superuser(self, email, password, **extra_fields):
+        extra_fields.setdefault("is_staff", True)
+        extra_fields.setdefault("is_superuser", True)
+        extra_fields.setdefault("is_active", True)
+
+        if extra_fields.get("is_staff") is not True:
+            raise ValueError(_("Superuser must have is_staff=True."))
+        if extra_fields.get("is_superuser") is not True:
+            raise ValueError(_("Superuser must have is_superuser=True."))
+        return self.create_user(email, password, **extra_fields)
+    """
 
 
-#class Author(auth.models.AbstractBaseUser):
+def get_filepath(instance, filename):
+    path = os.path.join(f"author_{instance.id}", f"avatar", "customAvatar.png")
+    return path
 
+class CustomUser(AbstractBaseUser, PermissionsMixin):
+    email = models.EmailField(unique=True)
+    username = models.CharField(max_length=50)
+    is_active = models.BooleanField(default=True)
+    join_date = models.DateTimeField(default=timezone.now)
+    avatar = models.ImageField(default=r'default.png', upload_to=get_filepath, storage=OverwriteStorage())
 
+    USERNAME_FIELD = "email" #ensures that email serves as an unique identifier for a user
 
-#Article
-ARTICLE_CONTENT_SCHEMA = {
-        "type": "object",
-        "patternProperties": {
-                r"^[A-Za-z0-9]+": {
-                "type": "object", 
-                "properties": {
-                    "type": {"type": "string"},
-                    "content": {"type": "string"}
-                },
-                "required": ["type", "content"],
-                "additionalProperties": False
-            }
-        }
-    } 
+    objects = CustomUserManager()
 
-class Article(models.Model):
-    author = models.ForeignKey(to=auth.get_user_model(), on_delete=models.CASCADE, related_name='articles') #creator (User)
-    create_date = models.DateTimeField(db_index=True, default=timezone.now) #creation date
-    update_date = models.DateTimeField(auto_now=True) #last update date
-    header = models.CharField(max_length=100, default="Unnamed article")
-    content = models.JSONField(default=model_utils.default_content) #article text (XdMD)
-    is_published = models.BooleanField(default=False) 
-
-    #@property
-    #def related_media(self):
-        #return self.media.all()
-
-#Media
-class Media(models.Model):
-    author = models.ForeignKey(to=auth.get_user_model(), on_delete=models.CASCADE, related_name='media') #creator (User)
-    content = models.FileField(upload_to=model_utils.get_filepath) #media itself
+    def __str__(self):
+        return f"{self.username} ({self.email})"
+    
     class Meta:
-        abstract = True
-
-class ArticleMedia(Media):
-    article = models.ForeignKey(to=Article, on_delete=models.CASCADE, related_name='media') #parent article
-    frag_id = models.CharField(max_length=30, default=None)
-
-class AvatarMedia(Media): ...
+        abstract = False
+        verbose_name = 'user'
+        verbose_name_plural = 'users'
 
 
-@receiver(models.signals.post_delete, sender=Media)
-def media_delete(sender: Media, instance: Media, **kwargs):
-    if instance.content:
-        print(instance.content.path)
-        #if os.path.isfile(instance.content.path):
-        os.remove(instance.content.path)
-    return
 
 
 

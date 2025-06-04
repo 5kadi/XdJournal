@@ -13,7 +13,7 @@ export async function load({cookies}) {
     if (refreshIsValid) {
         const requestBody = JSON.stringify({refresh: refreshToken})
         const res = await apiFetch(
-            '/user/token/refresh',
+            '/auth/token/refresh',
             {
                 method: "POST",
                 body: requestBody

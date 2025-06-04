@@ -4,10 +4,10 @@
     import type { PageProps } from "./$types";
 
     let { form }: PageProps = $props()
-    upperPopupState.message = form?.message
+    upperPopupState.message = JSON.stringify(form?.message)
 
 </script>
 
 <main class="flex flex-col items-center">
-    <AuthForm btnText={'Register'}/>
+    <AuthForm type={"register"}/>
 </main>

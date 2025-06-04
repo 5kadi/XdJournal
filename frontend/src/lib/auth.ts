@@ -1,14 +1,28 @@
 import type { Cookies } from "@sveltejs/kit"
 import { jwtDecode } from "jwt-decode"
 
-export function setAccess(cookies: Cookies, accessToken: string) {
-    //validity is already checked before this function call or the token is new
-    cookies.set('access', accessToken, {path: '/'})
+export function setAuthCookies(
+    cookies: Cookies, 
+    {
+        access, 
+        refresh, 
+        userData
+    } : 
+    {
+        access?: string, 
+        refresh?: string, 
+        userData?: string
+    }
+) {
+    access && cookies.set('access', access, {path: '/'})
+    refresh && cookies.set('refresh', refresh, {path: '/'})
+    userData && cookies.set('userData', userData, {path: '/'})
 }
 
 export function clearAuthCookies(cookies: Cookies) {
     cookies.delete('access', {path: '/'})
     cookies.delete('refresh', {path: '/'})
+    cookies.delete('userData', {path: '/'})
 }
 
 export function tokenIsValid(token: string) {

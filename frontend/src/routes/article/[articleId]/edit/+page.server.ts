@@ -13,7 +13,7 @@ export const actions: Actions = {
         formData.append('article', articleId!)
 
         const res = await apiFetch(
-            `/article/${articleId}/media/create`,
+            `/media/article/${articleId}/create`,
             {
                 method: "POST",
                 body: formData,

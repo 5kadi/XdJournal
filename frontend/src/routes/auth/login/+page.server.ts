@@ -1,16 +1,25 @@
 import type { Actions } from './$types';
 import { formActionsFetch } from '$lib/forms';
+import { setAuthCookies } from '$lib/auth';
+import { redirect } from '@sveltejs/kit';
 
 //NOTE: there is no need for message on successful login or reqister
 export const actions: Actions = {
     default: async ({cookies, request}) => formActionsFetch( 
-        '/user/token/get',
+        '/auth/token/get',
         "POST",
         request,
         {
             onsuccess: (resJson: any) => {
-                cookies.set('access', resJson.access, {path: '/'})
-                cookies.set('refresh', resJson.refresh, {path: '/'})
+                setAuthCookies(
+                    cookies, 
+                    {
+                        access: resJson.access,
+                        refresh: resJson.refresh,
+                        userData: JSON.stringify(resJson.userData)
+                    }
+                )
+                redirect(302, '/profile/self')
             }
         }
     )

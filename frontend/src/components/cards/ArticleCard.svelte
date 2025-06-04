@@ -1,5 +1,4 @@
 <script>
-	import MediaField from "../media/MediaField.svelte";
     import { PUBLIC_BACKEND_URL } from "$env/static/public";
 
     let { articleData } = $props()
@@ -8,12 +7,19 @@
 
 <article class="p-1 shadow-md grid grid-rows-12 h-full w-full">
     <section class="row-span-11 h-full w-full overflow-clip">
-        <div class="flex flex-row justify-between">
-            <h1 class="text-xl overflow-clip">{articleData.author.username}</h1>
-            <h3>{articleData.create_date.split('T')[0]}</h3>
+        <div class="max-h-1/6 flex flex-row justify-between">
+            <div class="flex flex-row gap-4">
+                <img 
+                    class="rounded-full object-cover object-center aspect-square"
+                    src={PUBLIC_BACKEND_URL + articleData.user.avatar} 
+                    alt={PUBLIC_BACKEND_URL + articleData.user.avatar}
+                />
+                <h1 class="text-xl overflow-clip">{articleData.user.username}</h1>
+            </div>
+            <h3 class="min-w-1/6 text-xs">{articleData.create_date.split('T')[0]}</h3>
         </div>
         {#if articleData.header_media}
-            <div class="h-3/5 bg-gray-50 flex justify-center items-center">
+            <div class="h-3/5 bg-gray-50 flex">
                 <img
                     class="h-full w-full object-contain"
                     src={PUBLIC_BACKEND_URL + articleData.header_media} 

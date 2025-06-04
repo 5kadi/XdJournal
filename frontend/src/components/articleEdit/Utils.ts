@@ -52,7 +52,9 @@ export function wrapContent(selection: Selection, cssClass: string) {
 
     range.insertNode(span)
 
+
     mergeSpansHorizontally(span)
+
 }
 
 /*

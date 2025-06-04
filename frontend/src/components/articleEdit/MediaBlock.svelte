@@ -23,6 +23,7 @@
                 type="file"
                 name="content"
                 onchange={autoUpload}
+                aria-label="Select and image"
             />
             <input
                 type="hidden"
