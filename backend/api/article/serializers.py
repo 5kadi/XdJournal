@@ -1,20 +1,23 @@
 from django.contrib.auth import get_user_model
-from .models import Article
+from .models import Article, ARTICLE_CONTENT_SCHEMA
 from rest_framework.serializers import ModelSerializer, SerializerMethodField
 from api.auth.serializers import UserSerializer
 from api.media.serializers import ArticleMediaSerializer
 
 
 class ArticleSerializer(ModelSerializer):
-    related_media = ArticleMediaSerializer(required=False, many=True)
+    #related_media = ArticleMediaSerializer(required=False, many=True)
+
     class Meta:
         model = Article
         fields = '__all__'
+
 
 class ArticleListSerializer(ModelSerializer):
     header_media = SerializerMethodField('get_header_media')
     header_content = SerializerMethodField('get_header_text')
     user = UserSerializer(read_only=True)
+
     class Meta:
         model = Article
         fields = [
@@ -27,17 +30,20 @@ class ArticleListSerializer(ModelSerializer):
         ]
 
     def get_header_media(self, obj: Article):
-        media_frag = None
-        for frag in obj.content.values():
-            if frag["type"] == "media":
-                media_frag = frag
+        #print(obj.content)
+        media_block = None
+        for block in obj.content:
+            print(block)
+            if block["type"] == "media":
+                media_block = block
                 break
         
-        if not media_frag:
+        if not media_block:
             return ""
         else:
-            return media_frag["content"]
+            return media_block["content"]
 
-    def get_header_text(self, obj: Article) -> str:
-        header_frag  = next(iter(obj.content.values())) #first item is always a text
-        return header_frag["content"][:250] + " ..."
+    def get_header_text(self, obj: Article) -> str: 
+        for block in obj.content:
+            if block["type"] == "text":
+                return block["content"][:250] + " ..."

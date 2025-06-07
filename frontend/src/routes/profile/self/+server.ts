@@ -4,8 +4,8 @@ import { json } from '@sveltejs/kit'
 
 
 export const PATCH = async ({request, params, cookies, url}) => {
-    const type: "file" | "text" | string | null = url.searchParams.get('type') //just make sure type exists lmfao
-
+    //just make sure action exists and it's either "file" or "text" lmfao
+    const action: "file" | "text" | string | null = url.searchParams.get('action') 
 
     //shitty code ngl
     const userData = cookies.get('userData')
@@ -13,7 +13,7 @@ export const PATCH = async ({request, params, cookies, url}) => {
     const { id } = JSON.parse(userData)
     if (!id) return json({ message: "Failed to get user's id" })
 
-    if (type == "file") {
+    if (action == "file") {
         const formData = await request.formData()
 
         const res = await apiFetch(
@@ -31,8 +31,8 @@ export const PATCH = async ({request, params, cookies, url}) => {
         if (newUserData) setAuthCookies(cookies, { userData: JSON.stringify(newUserData) })
         return json({message, newUserData: newUserData})
 
-    } else if (type == "text") {
-
+    } else if (action == "text") {
+        console.log("TODO") //TODO xd
     }  
 
 

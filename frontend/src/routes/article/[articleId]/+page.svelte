@@ -5,8 +5,8 @@
 </script>
 
 <h1 class="font-bold text-2xl">{data.header}</h1>
-<h2>Author's id: {data.author}</h2>
-{#each Object.entries(data.content as {[id: string]: {type: string, content: string}}) as contentBlock}
+<h2>Author: {data.user}</h2>
+{#each data.content.map((el: {type: string, content: string}, i: number) => [String(i), el]) as contentBlock, i (i)}
     {#if contentBlock[1].type === "text"} 
         <div>{@html contentBlock[1].content}</div>
     {:else if contentBlock[1].type === "media"}

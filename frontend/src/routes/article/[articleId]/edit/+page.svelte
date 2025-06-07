@@ -2,7 +2,6 @@
     import TextBlock from "../../../../components/articleEdit/TextBlock.svelte";
     import MediaBlock from "../../../../components/articleEdit/MediaBlock.svelte";
     import EditPopup from "../../../../components/articleEdit/EditPopup.svelte";
-    import { generateId } from "$lib/article";
 	import { upperPopupState } from "../../../../shared.svelte";
 
     let { data, form } = $props()
@@ -10,19 +9,12 @@
     let addedBlock: [string, {type: string, content: string}] | undefined = $state()
 
     function addBlock(type: string) {
-        const id = generateId()
-        addedBlock = [
-            id,
-            {
-                type: type,
-                content: ""
-            }
-        ]
+        addedBlock = [String(data.content.length), {type: type, content: ""}]
     }
 
     async function publishArticle(publishStatus: boolean) {
         const res = await fetch(
-            "",
+            "?action=publish",
             {
                 method: "PATCH",
                 body: JSON.stringify({publish_status: publishStatus})
@@ -40,13 +32,13 @@
 </script>
 
 
-<section>
+<section>   
     <button onclick={() => publishArticle(true)}>PUBLISH</button>
 </section>
 <main class="relative">
     <h1 class="font-bold text-2xl" contenteditable="true" bind:innerText={data.header}></h1>
-    {#each Object.entries(data.content as {[id: string]: {type: string, content: string}}) as contentBlock (contentBlock[0])}
-        {#if contentBlock[1].type === "text"} 
+    {#each data.content.map((el: {type: string, content: string}, i: number) => [String(i), el]) as contentBlock, i (i)}
+        {#if contentBlock[1].type === "text"}
             <TextBlock blockData={contentBlock}/>
         {:else if contentBlock[1].type === "media"}
             <MediaBlock blockData={contentBlock}/>

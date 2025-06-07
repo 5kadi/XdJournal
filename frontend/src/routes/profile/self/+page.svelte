@@ -12,7 +12,7 @@
             requestBody.append('avatar', file)
 
             const res = await fetch(
-                '?type=file',
+                '?action=file',
                 {
                     method: "PATCH",
                     body: requestBody,
@@ -23,10 +23,9 @@
             upperPopupState.message = message
 
             if (newUserData) {
-                userData = newUserData //customAvatar is not changed, so image doesn't rerender lmao
+                userData = newUserData
             }
         }
-
     }
 
 </script>

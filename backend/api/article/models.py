@@ -1,31 +1,22 @@
 from django.db import models
 from django.contrib import auth
 from django.utils import timezone
-import uuid 
 
-def default_content():
-    
-    return {
-        str(uuid.uuid4().fields[-1])[:5]: {
-            "type": "text", 
-            "content": "Express yourself here!"
-        }
-    }
+def default_content(): 
+    return [ { "type": "text", "content": "Express yourself here!" } ]
 
 ARTICLE_CONTENT_SCHEMA = {
-        "type": "object",
-        "patternProperties": {
-                r"^[A-Za-z0-9]+": {
-                "type": "object", 
-                "properties": {
-                    "type": {"type": "string"},
-                    "content": {"type": "string"}
-                },
-                "required": ["type", "content"],
-                "additionalProperties": False
-            }
-        }
-    } 
+    "type": "array",
+    "items": {
+        "type": "object", 
+        "properties": {
+            "type": {"type": "string"},
+            "content": {"type": "string"}
+        },
+        "required": ["type", "content"],
+        "additionalProperties": False
+    }
+}
 
 class Article(models.Model):
     user = models.ForeignKey(to=auth.get_user_model(), on_delete=models.CASCADE, related_name='articles') #creator (User)

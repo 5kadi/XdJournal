@@ -2,7 +2,7 @@ from django.utils import timezone
 from django.db import models
 from django.contrib.auth.models import AbstractBaseUser, PermissionsMixin
 from django.contrib.auth.base_user import BaseUserManager
-from .storage import OverwriteStorage
+from .storage import ExclusiveStorage, get_filepath
 import os
 
 #this code should be in api/models but it doesn't work there Xd
@@ -35,16 +35,14 @@ class CustomUserManager(BaseUserManager):
     """
 
 
-def get_filepath(instance, filename):
-    path = os.path.join(f"author_{instance.id}", f"avatar", "customAvatar.png")
-    return path
+
 
 class CustomUser(AbstractBaseUser, PermissionsMixin):
     email = models.EmailField(unique=True)
     username = models.CharField(max_length=50)
     is_active = models.BooleanField(default=True)
     join_date = models.DateTimeField(default=timezone.now)
-    avatar = models.ImageField(default=r'default.png', upload_to=get_filepath, storage=OverwriteStorage())
+    avatar = models.ImageField(default=r'default.png', upload_to=get_filepath, storage=ExclusiveStorage())
 
     USERNAME_FIELD = "email" #ensures that email serves as an unique identifier for a user
 

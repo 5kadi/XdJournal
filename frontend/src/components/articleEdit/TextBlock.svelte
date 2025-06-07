@@ -1,5 +1,6 @@
 <script lang="ts">
-    import { caretSpanEscape, wrapContent } from "./Utils";
+	import { upperPopupState } from "../../shared.svelte";
+    import { caretSpanEscape } from "./Utils";
 
 	let { blockData }: {blockData: [string, {type: string, content: string}]} = $props()
 	let editableDivRef: HTMLDivElement;
@@ -23,30 +24,51 @@
 		}
 	}
 
-	async function saveContent() {
-		console.log(blockData)
+	async function patchContent(action: "save_block" | "delete_block") { 
 		const res = await fetch(
-			'',
+			`?action=${action}`,
 			{
 				method: "PATCH",
-				body: JSON.stringify({content_frag: Object.fromEntries([blockData])}),
+				body: JSON.stringify(
+					{
+						block: action === "save_block" && blockData[1], 
+						block_id: blockData[0]
+					}
+				),
 			}
 		)
+
+		if (!res.ok) {
+			const { message } = await res.json()
+			upperPopupState.message = message
+		}
 	}
+
 </script>
 
 
 
-<div 
-	class="h-auto w-full inline-block"  
-	contenteditable="true" 
-	onfocus={handleFocus}
-	onfocusout={saveContent}
-    onmouseup={updateContent}
-	bind:this={editableDivRef} 
-	bind:innerHTML={blockData[1].content}
->
-</div>
+
+<!-- svelte-ignore a11y_no_static_element_interactions -->
+<section class="relative">
+	<button 
+		class="z-10 absolute right-0 top-0 p-2 m-0.5 rounded-md  bg-red-500 text-white font-bold"
+		onclick={() => patchContent("delete_block")}
+	>
+		X
+	</button>
+	<div 
+		class="h-auto w-full inline-block"  
+		contenteditable="true" 
+		onfocus={handleFocus}
+		onfocusout={() => patchContent("save_block")}
+		onmouseup={updateContent}
+		bind:this={editableDivRef} 
+		bind:innerHTML={blockData[1].content}
+	>
+	</div>
+</section>
+
 
 
 

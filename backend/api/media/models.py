@@ -6,26 +6,23 @@ import os
 
 
 def get_filepath(instance, filename):
-    path = os.path.join(f"author_{instance.user.id}", f"article_{instance.user.id}", filename)
+    path = os.path.join(f"user_{instance.user.id}", f"article_{instance.user.id}", filename)
     return path
 
 class Media(models.Model):
-    user = models.ForeignKey(to=auth.get_user_model(), on_delete=models.CASCADE, related_name='media') #creator (User)
+    user = models.ForeignKey(to=auth.get_user_model(), on_delete=models.CASCADE, related_name="%(app_label)s_%(class)s") #creator (User)
     content = models.FileField(upload_to=get_filepath) #media itself
     class Meta:
         abstract = True
 
+
 class ArticleMedia(Media):
-    article = models.ForeignKey(to=Article, on_delete=models.CASCADE, related_name='media') #parent article
-    frag_id = models.CharField(max_length=30, default=None)
+    article = models.ForeignKey(to=Article, on_delete=models.CASCADE, related_name='%(app_label)s_%(class)s') #parent article
 
 #class AvatarMedia(Media): ...
 
 
-@receiver(models.signals.post_delete, sender=Media)
+@receiver(models.signals.post_delete)
 def media_delete(sender: Media, instance: Media, **kwargs):
-    if instance.content:
-        print(instance.content.path)
-        #if os.path.isfile(instance.content.path):
+    if isinstance(instance, Media): 
         os.remove(instance.content.path)
-    return
