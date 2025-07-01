@@ -29,7 +29,7 @@ export const actions: Actions = {
 }
 
 export async function load({ parent }) {
-    const res = await parent()
-    if (!res.is_owner) error(401, "You don't own this article!")
-    return res
+    const { articleData } = await parent()
+    if (!articleData.is_owner) error(401, "You don't own this article!")
+    return articleData
 }

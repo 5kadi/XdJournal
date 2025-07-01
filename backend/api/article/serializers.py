@@ -1,7 +1,7 @@
 from django.contrib.auth import get_user_model
 from .models import Article, ARTICLE_CONTENT_SCHEMA
 from rest_framework.serializers import ModelSerializer, SerializerMethodField
-from api.auth.serializers import UserSerializer
+from api.auth.serializers import UserListSerializer
 from api.media.serializers import ArticleMediaSerializer
 
 
@@ -16,7 +16,7 @@ class ArticleSerializer(ModelSerializer):
 class ArticleListSerializer(ModelSerializer):
     header_media = SerializerMethodField('get_header_media')
     header_content = SerializerMethodField('get_header_text')
-    user = UserSerializer(read_only=True)
+    user = UserListSerializer(read_only=True)
 
     class Meta:
         model = Article
@@ -33,7 +33,7 @@ class ArticleListSerializer(ModelSerializer):
         #print(obj.content)
         media_block = None
         for block in obj.content:
-            print(block)
+            #print(block)
             if block["type"] == "media":
                 media_block = block
                 break

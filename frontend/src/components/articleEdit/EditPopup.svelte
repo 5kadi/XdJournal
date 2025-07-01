@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { onDestroy } from 'svelte';
     import { wrapContent, caretSpanEscape } from './Utils';
 
     let showEditMenu = $state(false)
@@ -43,6 +44,15 @@
         wrapContent(currentSelection, cssClass) 
     }
 
+    onDestroy(
+        () => {
+            return () => { 
+                document.removeEventListener("onselectionchange", handleSelectionChange)
+                document.removeEventListener("onmouseup", handleMouseUp) 
+            }
+        }
+    )
+
 </script>
 
 {#if showEditMenu}
@@ -57,7 +67,5 @@
 		</div>
 	</div>
 {/if}
-
-
 
 <svelte:document onselectionchange={handleSelectionChange} onmouseup={handleMouseUp}/>

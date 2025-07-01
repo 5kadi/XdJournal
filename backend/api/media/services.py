@@ -8,7 +8,7 @@ from urllib import parse
 def get_by_content(article_obj: Article, content: str) -> Media | None:
     content = parse.unquote_plus(content.split(MEDIA_URL)[-1])
     try:
-        media_objs = article_obj.api_articlemedia.all()
+        media_objs = article_obj.api_articlemedia.all() #related_name='%(app_label)s_%(class)s' in api.media.models
         media_obj = media_objs.get(content=content)
     except ObjectDoesNotExist:
         return None

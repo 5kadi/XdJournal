@@ -4,7 +4,7 @@
 	import GenericForm from "../../../components/forms/GenericForm.svelte";
 	import { upperPopupState } from "../../../shared.svelte";
 
-    let {form} = $props()
+    let { form } = $props()
     upperPopupState.message = form?.message
 
 </script>

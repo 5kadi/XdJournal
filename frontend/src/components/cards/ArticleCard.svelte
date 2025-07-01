@@ -1,8 +1,27 @@
-<script>
+<script lang="ts">
 	import { goto } from "$app/navigation";
     import { PUBLIC_BACKEND_URL } from "$env/static/public";
 
-    let { articleData } = $props()
+    let { 
+        articleData 
+    } 
+    :
+    {
+        articleData : { //why tf am I declaring types😭😭😭
+            user: {
+                id: number,
+                username: string,
+                is_active: boolean,
+                avatar: string,
+            },
+            id: number,
+            create_date: string,
+            header: string,
+            header_media: string,
+            header_content: string
+        }
+
+    } = $props()
 </script>
 
 

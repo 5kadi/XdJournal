@@ -50,4 +50,4 @@ class ArticleMediaView(ModelViewSet):
         
         media_obj.delete()
 
-        return Response({"message": "Deleted media successfully!"}, status=204)
+        return Response({"message": "Deleted media successfully!"}, status=200) #useless message btw

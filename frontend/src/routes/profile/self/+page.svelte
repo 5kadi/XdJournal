@@ -1,9 +1,12 @@
 <script lang="ts">
     import { PUBLIC_BACKEND_URL } from "$env/static/public";
 	import { upperPopupState } from "../../../shared.svelte";
+    import { fly } from "svelte/transition";
 
     let { data }: {data: any} = $props()
     let userData = $state(data)
+
+    let showButton = $state(false)
 
     async function changeAvatar(e: any) {
         const file = e.target.files[0]
@@ -28,6 +31,27 @@
         }
     }
 
+    async function changeUserData(valueKey: string) {
+        const newValue = userData[valueKey]
+        let requestBody: any =  {}
+        requestBody[valueKey] = newValue
+
+        const res = await fetch(
+                '?action=text',
+                {
+                    method: "PATCH",
+                    body: JSON.stringify(requestBody),
+                    //headers: {}
+                }
+            ) 
+            const {message, newUserData} = await res.json()
+            upperPopupState.message = message
+
+            if (newUserData) {
+                userData = newUserData
+            }
+    }
+
 </script>
 
 <main class="w-full h-screen flex flex-row">
@@ -46,7 +70,28 @@
         </div>
 
         <div class="flex flex-col w-full">
-            <h1 class="text-lg overflow-clip font-bold">{userData.username}</h1>
+            <div class="flex flex-col gap-1">
+                <h1 
+                    class="text-lg overflow-clip font-bold" 
+                    contenteditable="true"
+                    oninput={() => showButton = true}
+                    bind:innerText={userData.username}
+                ></h1>
+                {#if showButton}
+                    <div
+                        class="w-full flex justify-center "
+                        transition:fly={{y: -10, duration: 200}}
+                    >
+                        <button
+                            class="w-full bg-blue-100 rounded-md"
+                            onclick={() => changeUserData("username")}
+                        >
+                            Save
+                        </button>
+                    </div>
+                {/if}
+            </div>
+
             <h3 class="text-md overflow-clip">Email: {userData.email}</h3>
             <h3 class="text-md v">Status: {userData.is_active ? "active" : "banned"}</h3>
         </div>

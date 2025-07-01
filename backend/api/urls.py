@@ -6,5 +6,6 @@ from django.urls import path, include
 urlpatterns = [
     path(r'article/', include('api.article.urls')),
     path(r'auth/', include('api.auth.urls')),
-    path(r'media/', include('api.media.urls'))
+    path(r'media/', include('api.media.urls')),
+    path(r'comment/', include('api.comment.urls'))
 ]

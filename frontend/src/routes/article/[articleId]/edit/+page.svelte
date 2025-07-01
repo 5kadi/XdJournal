@@ -3,13 +3,21 @@
     import MediaBlock from "../../../../components/articleEdit/MediaBlock.svelte";
     import EditPopup from "../../../../components/articleEdit/EditPopup.svelte";
 	import { upperPopupState } from "../../../../shared.svelte";
+	import ArticleCard from "../../../../components/cards/ArticleCard.svelte";
 
     let { data, form } = $props()
     upperPopupState.message = form?.message
-    let addedBlock: [string, {type: string, content: string}] | undefined = $state()
+
+    let articleBlocks: Array<[string, {type: string, content: string}]> = $state(
+        data.content.map(
+            (block: {type: string, content: string}, idx: number) => [String(idx), block]
+        )
+    )
 
     function addBlock(type: string) {
-        addedBlock = [String(data.content.length), {type: type, content: ""}]
+        //probably shitty code but idgaf Xd
+        const addedBlock = [String(articleBlocks.length), {type: type, content: ""}] as [string, {type: string, content: string}]
+        articleBlocks = [...articleBlocks, addedBlock]   
     }
 
     async function publishArticle(publishStatus: boolean) {
@@ -23,8 +31,18 @@
         const resData = await res.json()
         upperPopupState.message = resData.message
     }
+
+    function deleteBlock(id: string) {
+        articleBlocks = articleBlocks.filter( 
+            (el) => el[0] !== id
+        )
+        articleBlocks = articleBlocks.map(
+            (el, idx: number) => [String(idx), el[1]]
+        )
+        //console.log(articleBlocks.map((el) => el[1]))
+    }
     
-    const ADDED_BLOCKS: {[key: string]: typeof TextBlock} = {
+    const BLOCKS: {[key: string]: typeof TextBlock} = {
         "text": TextBlock,
         "media": MediaBlock
     }
@@ -32,23 +50,18 @@
 </script>
 
 
-<section>   
+<section>
     <button onclick={() => publishArticle(true)}>PUBLISH</button>
 </section>
 <main class="relative">
     <h1 class="font-bold text-2xl" contenteditable="true" bind:innerText={data.header}></h1>
-    {#each data.content.map((el: {type: string, content: string}, i: number) => [String(i), el]) as contentBlock, i (i)}
-        {#if contentBlock[1].type === "text"}
-            <TextBlock blockData={contentBlock}/>
-        {:else if contentBlock[1].type === "media"}
-            <MediaBlock blockData={contentBlock}/>
-        {/if}
+    {#each articleBlocks as contentBlock, i (contentBlock[0])}
+        {@const Block = BLOCKS[contentBlock[1].type]}
+        <Block 
+            bind:blockData={articleBlocks[i]}
+            deleteFromArray={deleteBlock}
+        />
     {/each}
-
-    {#if addedBlock}
-        {@const Block = ADDED_BLOCKS[addedBlock[1].type]}
-        <Block blockData={addedBlock}/>
-    {/if}
 </main>
 
 <div class="flex flex-row gap-4">

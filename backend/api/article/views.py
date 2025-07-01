@@ -53,8 +53,9 @@ class ArticleView(ModelViewSet):
         block = request.data.get('block')
 
         if block_is_valid(block):
+            block["content"] = make_safe(block["content"])
             modify_content(article_obj, block_id, block)
-            return Response({'message': 'Saved successfully!'}, status=200) #message is useless here Xd
+            return Response({"block_id": block_id, "block": block}, status=200) 
         else:
             return Response({"message": "Invalid JSON schema!"}, status=400)
         
@@ -66,7 +67,7 @@ class ArticleView(ModelViewSet):
         if not block:
             return Response({"message": "Article should have at least 1 block!"}, status=400)
         else:
-            return Response({"message": "Deleted block successfully!"}, status=400)
+            return Response({"message": "Deleted block successfully!"}, status=200)
 
     #save & set is_published = True
     @ownership_required()

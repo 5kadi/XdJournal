@@ -1,7 +1,7 @@
 import { apiFetch } from '$lib/api.js'
 import { error } from '@sveltejs/kit'
 
-
+//article data is needed for both editing and viewing
 export async function load({ params, cookies }) {
     const { articleId } = params
     const accessToken = cookies.get('access')
@@ -18,5 +18,5 @@ export async function load({ params, cookies }) {
     if (!res.ok) {
         error(res.status, JSON.stringify(resData))
     }
-    return resData
+    return {articleData: resData}
 }

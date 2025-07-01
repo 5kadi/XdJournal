@@ -1,8 +1,16 @@
 <script lang="ts">
 	import { upperPopupState } from "../../shared.svelte";
 	import { PUBLIC_BACKEND_URL } from "$env/static/public";
+	import { onDestroy } from "svelte";
 
-	let { blockData }: {blockData: [string, {type: string, content: string}]} = $props()
+	let { 
+        blockData = $bindable(),
+        deleteFromArray
+    }: 
+    { 
+        blockData: [string, {type: string, content: string}],
+        deleteFromArray: (id: string) => void
+    } = $props()
 
     async function createMedia(e: any) {
         const file = e.target.files[0]
@@ -30,6 +38,11 @@
     }
 
     async function deleteMedia(e: any) {
+        if (blockData[1].content === "") {
+			deleteFromArray(blockData[0])
+			return
+		}
+
         const res = await fetch(
             '?action=media',
             {
@@ -39,7 +52,7 @@
         ) 
 
         const resJson = await res.json()
-        if (res.ok) blockData[1].type = "deleted"
+        if (res.ok) deleteFromArray(blockData[0])
         else upperPopupState.message = resJson.message  
     }
 
@@ -60,7 +73,7 @@
             X
         </button>
     </div>
-{:else if blockData[1].type !== "deleted"}
+{:else}
     <div class="w-[30%] h-auto">
         <input 
             type="file"

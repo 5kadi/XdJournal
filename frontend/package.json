@@ -36,6 +36,7 @@
 	},
 	"dependencies": {
 		"@jhbrown94/selectionrange": "^0.1.1",
-		"jwt-decode": "^4.0.0"
+		"jwt-decode": "^4.0.0",
+		"sleep-promise": "^9.1.0"
 	}
 }

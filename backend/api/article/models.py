@@ -18,6 +18,7 @@ ARTICLE_CONTENT_SCHEMA = {
     }
 }
 
+
 class Article(models.Model):
     user = models.ForeignKey(to=auth.get_user_model(), on_delete=models.CASCADE, related_name='articles') #creator (User)
     create_date = models.DateTimeField(db_index=True, default=timezone.now) #creation date
