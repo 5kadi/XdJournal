@@ -14,11 +14,9 @@
 
     function handleSelectionChange() {
         currentSelection = document.getSelection()!
-
     }
 
     function handleMouseUp(e: any) {
-        
         const pointedElement = document.elementFromPoint(e.clientX, e.clientY)!
         if (!editMenuRef || !editMenuRef.contains(pointedElement)) { //NOTE: can use it to combine child spans later
             pos = {

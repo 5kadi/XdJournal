@@ -44,14 +44,12 @@ function mergeSpanClasses(fragment: DocumentFragment) { //welp, yeah
 export function wrapContent(selection: Selection, cssClass: string) {
     const range = selection.getRangeAt(0)
     const { textContent } = range.extractContents()
-    if (!textContent) return
-    
+
     let span = document.createElement('span')
     span.classList.add(cssClass)
     span.innerText = textContent!
 
     range.insertNode(span)
-
 
     mergeSpansHorizontally(span)
 
@@ -68,8 +66,6 @@ export function normalizeContent(selection: Selection) { //doesn't work anyways 
     range.insertNode(normalizedText)
 } 
 */
-
-
 
 export async function caretSpanEscape(selection: Selection, parentDiv: HTMLDivElement) {
     parentDiv.innerHTML += '&nbsp;' //цыганские фокусы

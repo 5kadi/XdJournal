@@ -13,3 +13,41 @@ export const GET = async ({request, params, url}) => {
 
     return res
 }
+
+export const POST = async ({request, params, url, cookies}) => {
+    const action = url.searchParams.get('action') as "article" | "comment"
+
+    let id = params.articleId
+    if (action == "comment") {
+        id = url.searchParams.get('commentId')!
+    }
+
+    const res = await apiFetch(
+        `/like/${action}/${id}/set`,
+        {
+            method: "POST"
+        },
+        cookies.get('access')
+    )
+
+    return res
+}
+
+export const DELETE = async ({request, params, url, cookies}) => {
+    const action = url.searchParams.get('action') as "article" | "comment"
+
+    let id = params.articleId
+    if (action == "comment") {
+        id = url.searchParams.get('commentId')!
+    }
+
+    const res = await apiFetch(
+        `/like/${action}/${id}/remove`,
+        {
+            method: "DELETE"
+        },
+        cookies.get('access')
+    )
+
+    return res
+}

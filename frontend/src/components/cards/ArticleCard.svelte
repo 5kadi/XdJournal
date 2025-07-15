@@ -2,26 +2,7 @@
 	import { goto } from "$app/navigation";
     import { PUBLIC_BACKEND_URL } from "$env/static/public";
 
-    let { 
-        articleData 
-    } 
-    :
-    {
-        articleData : { //why tf am I declaring types😭😭😭
-            user: {
-                id: number,
-                username: string,
-                is_active: boolean,
-                avatar: string,
-            },
-            id: number,
-            create_date: string,
-            header: string,
-            header_media: string,
-            header_content: string
-        }
-
-    } = $props()
+    let { articleData } : { articleData : ArticleListData } = $props()
 </script>
 
 
@@ -56,7 +37,8 @@
             </div>
         </div>
     </section>
-    <footer class="row-span-1 text-xs">
-        Likes kinda, Reposts, etc... Xd
+    <footer class="row-span-1 text-xs flex flex-row gap-2">
+        <text>{articleData.like_count} Likes</text>
+        <text>{articleData.comment_count} Comments</text>
     </footer>
 </article>

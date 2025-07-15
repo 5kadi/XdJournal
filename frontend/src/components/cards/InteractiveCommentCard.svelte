@@ -1,5 +1,6 @@
 <script lang="ts">
     import { PUBLIC_BACKEND_URL } from "$env/static/public";
+	import LikeButton from "../buttons/LikeButton.svelte";
 
     let { commentData } : { commentData: CommentListData } = $props()
 
@@ -24,4 +25,11 @@
             </div>
         </div>
     </div>
+    <footer class="row-span-1 text-xs">
+        <LikeButton
+            initialIsLiked={commentData.is_liked}
+            initialLikeCount={commentData.like_count}
+            serverRoute={`?action=comment&commentId=${commentData.id}`}
+        />
+    </footer>
 </div>

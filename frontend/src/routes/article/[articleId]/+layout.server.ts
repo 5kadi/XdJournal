@@ -18,5 +18,11 @@ export async function load({ params, cookies }) {
     if (!res.ok) {
         error(res.status, JSON.stringify(resData))
     }
-    return {articleData: resData}
+
+    let articleData = resData
+    articleData.content = articleData.content.map(
+        (el: {type: string, content: string}, i: number) => { return { id: i, blockData: el } }
+    )
+
+    return { articleData: articleData} as { articleData: ArticleData }
 }

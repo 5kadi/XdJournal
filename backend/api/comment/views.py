@@ -2,7 +2,7 @@ from rest_framework.viewsets import ModelViewSet
 from rest_framework.permissions import IsAuthenticatedOrReadOnly
 from rest_framework.request import Request
 from rest_framework.response import Response
-from .serializers import CommentSerializer, CommentListSerializer
+from .serializers import *
 from .models import Comment
 from .pagination import CommentPaginator
 
@@ -14,7 +14,11 @@ class CommentView(ModelViewSet):
     def list(self, request: Request, article_id: int, *args, **kwargs):
         sel_comments = self.queryset.filter(article__pk=article_id)
         paginated_comments = CommentPaginator.paginate_queryset(sel_comments, request)
-        serializer = CommentListSerializer(paginated_comments, many=True)
+        serializer = CommentURDListSerializer(
+            paginated_comments, 
+            custom_kwargs={ "request_user": request.user },
+            many=True
+        )
 
         return CommentPaginator.get_paginated_response(serializer.data)
     

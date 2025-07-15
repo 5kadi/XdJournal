@@ -21,12 +21,15 @@ export async function load({ params, parent, cookies }) {
         `/comment/${articleId}/list`,
         {
             method: "GET"
-        }
+        },
+        cookies.get('access')
     )
     const resData = await res.json()
+    //console.log(resData)
     
     if (!res.ok) {
         error(res.status, JSON.stringify(resData))
     }
-    return {commentsData: resData} //this object will be merged with response obj from +layout.server.ts
+    //this object will be merged with response obj from +layout.server.ts
+    return { commentsData: resData } as { commentsData: ArticleComments }
 }

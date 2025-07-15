@@ -3,7 +3,7 @@ import { apiFetch } from '$lib/api'
 //for saving text blocks & publishing articles
 export const PATCH = async ({request, params, cookies, url}) => {
     //just make sure type exists and it's either "file" or "text" lmfao
-    const action: "save_block" | "delete_block" | "publish" | string | null = url.searchParams.get('action') 
+    const action = url.searchParams.get('action') as "save_block" | "delete_block" | "reposition_block" | "publish" 
     const data = await request.json()
     
     const res = await apiFetch(

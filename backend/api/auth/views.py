@@ -48,7 +48,7 @@ class UserView(ModelViewSet):
             else:
                 return Response({"message": serializer.errors}, status=400)
 
-    def refresh_user_data(self, request: Request):
+    def get_user_data(self, request: Request):
         #can just do this lmao
         user = request.user
         if user.is_authenticated:

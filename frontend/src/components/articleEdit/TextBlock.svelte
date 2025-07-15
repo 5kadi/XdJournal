@@ -1,20 +1,19 @@
 <script lang="ts">
-	import { onDestroy } from "svelte";
 	import { upperPopupState } from "../../shared.svelte";
     import { caretSpanEscape } from "./Utils";
 
 	let { 
-        blockData = $bindable(),
+        articleBlock = $bindable(),
         deleteFromArray
     }: 
     { 
-        blockData: [string, {type: string, content: string}],
-        deleteFromArray: (id: string) => void
+        articleBlock: ArticleBlock,
+        deleteFromArray: (id: number) => void
     } = $props()
 
     //wrapContent inserts html tags into range and doesn't trigger state update, this is why we need this function
 	function updateContent(e: any) {
-		blockData[1].content = e.target.innerHTML
+		articleBlock.blockData.content = e.target.innerHTML
 	}
 	
 	async function handleFocus(e: any) {
@@ -33,7 +32,7 @@
 
 	async function saveBlock() {
 		//console.log('saving...')
-		if (blockData[1].content === "") return
+		if (articleBlock.blockData.content === "") return
 
 		const res = await fetch(
 			'?action=save_block',
@@ -41,8 +40,8 @@
 				method: "PATCH",
 				body: JSON.stringify(
 					{
-						block: blockData[1], 
-						block_id: blockData[0]
+						block: articleBlock.blockData, 
+						block_id: articleBlock.id
 					}
 				),
 			}
@@ -51,7 +50,7 @@
 
 		if (res.ok) {
 			const { block_id, block } = resJson
-			blockData = [String(block_id), block]
+			articleBlock = {id: block_id, blockData: block}
 		}
 		else {
 			const { message } = resJson
@@ -61,8 +60,8 @@
 	}
 
 	async function deleteBlock() {
-		if (blockData[1].content === "") {
-			deleteFromArray(blockData[0])
+		if (articleBlock.blockData.content === "") {
+			deleteFromArray(articleBlock.id)
 			return
 		}
 
@@ -72,7 +71,7 @@
 				method: "PATCH",
 				body: JSON.stringify(
 					{
-						block_id: blockData[0]
+						block_id: articleBlock.id
 					}
 				),
 			}
@@ -83,14 +82,14 @@
 			upperPopupState.message = message
 		}
 		else {
-			deleteFromArray(blockData[0])
+			deleteFromArray(articleBlock.id)
 		}
 	}
 
 </script>
 
 
-{#if blockData}
+{#if articleBlock}
 	<!-- svelte-ignore a11y_no_static_element_interactions -->
 	<section class="relative">
 		<button 
@@ -107,7 +106,7 @@
 			onclick={saveBlock}
 			onfocusout={saveBlock}
 			onmouseup={updateContent}
-			bind:innerHTML={blockData[1].content}
+			bind:innerHTML={articleBlock.blockData.content}
 		>
 		</div>
 	</section>	

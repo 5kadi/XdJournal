@@ -5,7 +5,7 @@ import { json } from '@sveltejs/kit'
 
 export const PATCH = async ({request, params, cookies, url}) => {
     //just make sure action exists and it's either "file" or "text" lmfao
-    const action: "file" | "text" = url.searchParams.get('action') as "file" | "text"
+    const action = url.searchParams.get('action') as "file" | "text"
 
     //shitty code ngl
     const userData = cookies.get('userData')

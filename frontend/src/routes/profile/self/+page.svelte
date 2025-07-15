@@ -3,8 +3,8 @@
 	import { upperPopupState } from "../../../shared.svelte";
     import { fly } from "svelte/transition";
 
-    let { data }: {data: any} = $props()
-    let userData = $state(data)
+    let { data } = $props()
+    let userData = $state(data.userData)
 
     let showButton = $state(false)
 
@@ -32,7 +32,7 @@
     }
 
     async function changeUserData(valueKey: string) {
-        const newValue = userData[valueKey]
+        const newValue = (userData as any)[valueKey]
         let requestBody: any =  {}
         requestBody[valueKey] = newValue
 

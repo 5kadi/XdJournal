@@ -31,5 +31,5 @@ export const actions: Actions = {
 export async function load({ parent }) {
     const { articleData } = await parent()
     if (!articleData.is_owner) error(401, "You don't own this article!")
-    return articleData
+    return { articleData: articleData } as { articleData: ArticleData }
 }

@@ -8,7 +8,6 @@ def get_filepath(instance, filename):
 
 
 class ExclusiveStorage(FileSystemStorage):
-
     def get_available_name(self, name: str, max_length=None):
         full_path = self.path(name)
         directory = os.path.dirname(full_path)

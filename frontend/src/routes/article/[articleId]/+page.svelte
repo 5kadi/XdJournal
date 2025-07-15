@@ -1,6 +1,6 @@
 <script lang="ts">
-	import { generateId } from '$lib/article';
-	import CommentCard from '../../../components/cards/CommentCard.svelte';
+	import LikeButton from '../../../components/buttons/LikeButton.svelte';
+	import InteractiveCommentCard from '../../../components/cards/InteractiveCommentCard.svelte';
 	import CommentForm from '../../../components/forms/CommentForm.svelte';
 	import MediaField from '../../../components/media/MediaField.svelte';
 	import InfiniteScrollbar from '../../../components/scrollbars/InfiniteScrollbar.svelte';
@@ -11,8 +11,6 @@
 
     let { articleData } = data
     let commentsData = $state(data.commentsData)
-
-    let commentsSectionRef: HTMLElement;
 
     async function loadMore() {
         if (commentsData.next) {
@@ -36,32 +34,44 @@
         }
     }
 
+
+
 </script>
 
 <main class="mb-10 mx-5">
     <h1 class="font-bold text-2xl">{articleData.header}</h1>
-    <h2>Author: {articleData.user}</h2>
-    {#each articleData.content.map((el: {type: string, content: string}, i: number) => [String(i), el]) as contentBlock, i (i)}
-        {#if contentBlock[1].type === "text"} 
-            <div>{@html contentBlock[1].content}</div>
-        {:else if contentBlock[1].type === "media"}
-            <MediaField mediaUrl={contentBlock[1].content}/>
+    <h2>Author: {articleData.user.username}</h2>
+    {#each articleData.content as {id, blockData} (id)}
+        {#if blockData.type === "text"} 
+            <div>{@html blockData.content}</div>
+        {:else if blockData.type === "media"}
+            <MediaField mediaUrl={blockData.content}/>
         {/if}
     {/each}
 </main>
 
-<section class="flex flex-col gap-4 mx-5 mb-10" bind:this={commentsSectionRef}>
-    <h1 class="text-2xl font-bold">Comments</h1>
-    <CommentForm/>
-    <InfiniteScrollbar
-        scrollbarContent={Comments}
-        loadFunction={loadMore}
-    />
+<section class="flex flex-col gap-4 mx-5 mb-10"> 
+    <div class="flex flex-row gap-4">
+        <LikeButton 
+            initialIsLiked={articleData.is_liked}
+            initialLikeCount={articleData.like_count}
+            serverRoute={"?action=article"}
+        />  
+        <h1 class="text-2xl font-bold">{articleData.comment_count} Comments</h1>
+    </div> 
+    <div>
+        <CommentForm/>
+        <InfiniteScrollbar
+            scrollbarContent={Comments}
+            loadFunction={loadMore}
+        />
+    </div>
+
 </section>
 
 {#snippet Comments()}
     {#each commentsData.results as commentData, i (i)}
-        <CommentCard commentData={commentData}/>
+        <InteractiveCommentCard commentData={commentData}/>
     {/each} 
 {/snippet}
 

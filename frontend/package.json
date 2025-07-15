@@ -37,6 +37,6 @@
 	"dependencies": {
 		"@jhbrown94/selectionrange": "^0.1.1",
 		"jwt-decode": "^4.0.0",
-		"sleep-promise": "^9.1.0"
+		"svelte-dnd-action": "^0.9.63"
 	}
 }

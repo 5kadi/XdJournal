@@ -15,5 +15,5 @@ export async function load({cookies} : {cookies: Cookies}) {
     const userData = await res.json()
     setAuthCookies(cookies, { userData: JSON.stringify(userData) })
 
-    return userData
+    return { userData: userData } as { userData: UserData}
 }
